@@ -206,6 +206,18 @@ useEffect(() => {
     setView('landing');
   };
 
+  const handleDelete = async (slug: string) => {
+    if (window.confirm('Are you sure you want to delete this site? This action cannot be undone.')) {
+      try {
+        await storage.deleteSite(slug);
+        setUserSites(prevSites => prevSites.filter(site => site.slug !== slug));
+      } catch (error) {
+        console.error("Error deleting site:", error);
+        alert("Failed to delete the site. Please try again.");
+      }
+    }
+  };
+
   const currentHost = window.location.host;
 
   if (view === 'public' && publicData) return <TemplateTwo data={publicData} />;
@@ -288,12 +300,14 @@ useEffect(() => {
               <p className="text-slate-400 font-medium">Logged in as {user.email}</p>
             </div>
             <div className="flex gap-4">
+              {userSites.length === 0 && (
               <button 
                 onClick={() => { setData(INITIAL_DATA); setCurrentSlug(null); setView('builder'); setStep('details'); }} 
                 className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black flex items-center gap-2 shadow-lg hover:bg-indigo-700"
               >
                 <Plus className="w-5 h-5" /> New Portfolio
               </button>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -310,12 +324,20 @@ useEffect(() => {
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-1">{site.data.name}</h3>
                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest truncate">{currentHost}/p/{site.slug}</p>
-                <button 
-                  onClick={() => { setData(site.data); setCurrentSlug(site.slug); setView('builder'); setStep('preview'); }} 
-                  className="w-full bg-slate-50 text-slate-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-colors mt-8"
-                >
-                  Edit Portfolio
-                </button>
+                <div className="flex gap-2 mt-8">
+                  <button 
+                    onClick={() => { setData(site.data); setCurrentSlug(site.slug); setView('builder'); setStep('preview'); }} 
+                    className="w-full bg-slate-50 text-slate-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-colors"
+                  >
+                    Edit Portfolio
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(site.slug)}
+                    className="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>

@@ -2,6 +2,8 @@
 
 Stop sending boring PDFs. Recruiters spend only 6 seconds looking at your resume—give them something they actually want to scroll through. **FolioSwift** turns your bullet points into a stunning, high-end professional website in under 5 minutes.
 
+you can use it from this link - https://folioswift.vercel.app/
+
 ---
 
 ## ✨ Features

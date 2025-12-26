@@ -48,5 +48,17 @@ export const storage = {
 
     if (error) return [];
     return data as any[];
+  },
+
+  // Delete a site by its slug
+  deleteSite: async (slug: string) => {
+    const { error } = await supabase
+      .from('portfolios')
+      .delete()
+      .eq('slug', slug);
+
+    if (error) {
+      throw error;
+    }
   }
 };
