@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { PortfolioData, Project, GalleryItem, Experience, CustomLink, Certification } from '../types';
-import { Plus, Trash2, Github, Linkedin, Instagram, Camera, GraduationCap, Briefcase, User, Sparkles, Image as ImageIcon, X, Tag, Settings, Phone, MapPin, ExternalLink, Link as LinkIcon, Twitter, Award, FileText, Upload } from 'lucide-react';
+import { PortfolioData, Project, GalleryItem, Experience, CustomLink, Certification, ProjectLink } from '../types';
+import { Plus, Trash2, Github, Linkedin, Instagram, Camera, GraduationCap, Briefcase, User, Sparkles, Image as ImageIcon, X, Tag, Settings, Phone, MapPin, ExternalLink, Link as LinkIcon, Twitter, Award, FileText, Upload, Youtube } from 'lucide-react';
 
 interface Props {
   initialData: PortfolioData;
@@ -82,7 +82,30 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
     setData(prev => ({ ...prev, customLinks: updatedLinks }));
   };
 
-  const addProject = () => setData(prev => ({ ...prev, projects: [...prev.projects, { title: '', description: '' }] }));
+  const handleProjectLinkChange = (projIndex: number, linkIndex: number, field: keyof ProjectLink, value: string) => {
+    const updatedProjects = [...data.projects];
+    const updatedLinks = [...(updatedProjects[projIndex].links || [])];
+    updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], [field]: value };
+    updatedProjects[projIndex] = { ...updatedProjects[projIndex], links: updatedLinks };
+    setData(prev => ({ ...prev, projects: updatedProjects }));
+  };
+
+  const addProjectLink = (projIndex: number) => {
+    const updatedProjects = [...data.projects];
+    const updatedLinks = [...(updatedProjects[projIndex].links || [])];
+    updatedLinks.push({ label: 'GitHub', url: '' });
+    updatedProjects[projIndex] = { ...updatedProjects[projIndex], links: updatedLinks };
+    setData(prev => ({ ...prev, projects: updatedProjects }));
+  };
+
+  const removeProjectLink = (projIndex: number, linkIndex: number) => {
+    const updatedProjects = [...data.projects];
+    const updatedLinks = (updatedProjects[projIndex].links || []).filter((_, i) => i !== linkIndex);
+    updatedProjects[projIndex] = { ...updatedProjects[projIndex], links: updatedLinks };
+    setData(prev => ({ ...prev, projects: updatedProjects }));
+  };
+
+  const addProject = () => setData(prev => ({ ...prev, projects: [...prev.projects, { title: '', description: '', links: [] }] }));
   const removeProject = (index: number) => setData(prev => ({ ...prev, projects: prev.projects.filter((_, i) => i !== index) }));
   
   const addExperience = () => setData(prev => ({ ...prev, experiences: [...prev.experiences, { role: '', company: '', period: '', description: '' }] }));
@@ -293,9 +316,26 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
               <div className="flex-grow space-y-4">
                 <input type="text" placeholder="Project Name" value={project.title} onChange={(e) => handleProjectChange(index, 'title', e.target.value)} className="w-full px-4 py-2 rounded-lg border outline-none font-bold" />
                 <textarea placeholder="Description" rows={2} value={project.description} onChange={(e) => handleProjectChange(index, 'description', e.target.value)} className="w-full px-4 py-2 rounded-lg border outline-none resize-none" />
-                <div className="flex items-center gap-2">
-                  <ExternalLink className="w-4 h-4 text-slate-400" />
-                  <input type="url" placeholder="Direct Project Link (Optional)" value={project.link || ''} onChange={(e) => handleProjectChange(index, 'link', e.target.value)} className="flex-1 px-4 py-2 rounded-lg border outline-none text-xs" />
+                <div className="space-y-3">
+                  {project.links?.map((link, linkIndex) => (
+                    <div key={linkIndex} className="flex items-center gap-2">
+                      <select value={link.label} onChange={(e) => handleProjectLinkChange(index, linkIndex, 'label', e.target.value)} className="px-2 py-2 rounded-lg border bg-white text-xs">
+                        <option>GitHub</option>
+                        <option>YouTube</option>
+                        <option>Live Demo</option>
+                        <option>Other</option>
+                      </select>
+                      <input
+                        type="url"
+                        placeholder="Link URL"
+                        value={link.url}
+                        onChange={(e) => handleProjectLinkChange(index, linkIndex, 'url', e.target.value)}
+                        className="flex-1 px-4 py-2 rounded-lg border outline-none text-xs"
+                      />
+                      <button type="button" onClick={() => removeProjectLink(index, linkIndex)} className="text-slate-300 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => addProjectLink(index)} className="flex items-center gap-2 text-indigo-600 font-bold text-sm px-2 py-1 hover:bg-indigo-50 rounded-lg"><Plus className="w-4 h-4" /> Add Link</button>
                 </div>
               </div>
               <div className="w-full md:w-32 h-32 flex-shrink-0 bg-white border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden relative">

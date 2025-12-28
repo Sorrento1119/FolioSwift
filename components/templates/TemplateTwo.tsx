@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PortfolioData, SectionId, UIStyle } from '../../types';
-import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2 } from 'lucide-react';
+import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2, Youtube, Link } from 'lucide-react';
 
 const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const primaryColor = data.settings.primaryColor;
@@ -161,8 +161,18 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
                 <div key={i} className="group flex flex-col md:flex-row gap-10 items-start">
                   {p.image && <div className={`w-full md:w-64 h-44 flex-shrink-0 overflow-hidden shadow-xl ${uiStyle === UIStyle.GLASS ? 'rounded-[40px]' : 'rounded-none'}`}><img src={p.image} className="w-full h-full object-cover transition-transform group-hover:scale-110" /></div>}
                   <div className="flex-1">
-                    <h4 className="text-3xl font-black mb-4 flex items-center gap-4" style={{ color: sHeadingColor }}>{p.title} {p.link && <a href={p.link} target="_blank" className="hover:text-indigo-600 transition-colors"><ExternalLink className="w-5 h-5" /></a>}</h4>
-                    <p className="text-base opacity-70 leading-relaxed" style={{ color: sStyle.color }}>{p.description}</p>
+                    <h4 className="text-3xl font-black mb-4 flex items-center gap-4" style={{ color: sHeadingColor }}>{p.title}</h4>
+                    <p className="text-base opacity-70 leading-relaxed mb-4" style={{ color: sStyle.color }}>{p.description}</p>
+                    <div className="flex items-center gap-4 mt-4">
+                      {p.links?.map((link, linkIndex) => (
+                        <a key={linkIndex} href={link.url} target="_blank" className="flex items-center gap-2 hover:text-indigo-600 transition-colors">
+                          {link.label.toLowerCase() === 'github' && <Github className="w-5 h-5" />}
+                          {link.label.toLowerCase() === 'youtube' && <Youtube className="w-5 h-5" />}
+                          {link.label.toLowerCase() !== 'github' && link.label.toLowerCase() !== 'youtube' && <Link className="w-5 h-5" />}
+                          <span className="text-xs font-bold">{link.label}</span>
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}

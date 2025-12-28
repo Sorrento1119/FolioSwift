@@ -57,11 +57,16 @@ export interface Certification {
   link?: string;
 }
 
+export interface ProjectLink {
+  label: string;
+  url: string;
+}
+
 export interface Project {
   title: string;
   description: string;
   image?: string; 
-  link?: string;
+  links?: ProjectLink[];
 }
 
 export interface CustomLink {

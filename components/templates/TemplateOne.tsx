@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { PortfolioData, ThemeType, AnimationType, SectionId } from '../../types';
-import { Github, Linkedin, Instagram, ArrowRight, Sparkles } from 'lucide-react';
+import { Github, Linkedin, Instagram, ArrowRight, Sparkles, Youtube, Link } from 'lucide-react';
 
 const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const isDark = data.settings.theme === ThemeType.DARK;
@@ -33,7 +33,6 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
 
     return () => observer.disconnect();
   }, [data.sectionOrder, data.settings.animation, data.settings.theme, data.settings.primaryColor]);
-
   const getSectionStyles = (id: string) => {
     const override = data.settings.sectionColors?.[id];
     return {
@@ -102,7 +101,17 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
                   <h3 className="text-3xl font-black mb-4 flex items-center gap-4 tracking-tighter" style={{ color: sHeadingColor }}>
                     {project.title} <ArrowRight className="w-8 h-8 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" style={{ color: primaryColor }} />
                   </h3>
-                  <p className={`text-xl leading-relaxed font-medium`} style={{ color: sStyle.color }}>{project.description}</p>
+                  <p className={`text-xl leading-relaxed font-medium mb-4`} style={{ color: sStyle.color }}>{project.description}</p>
+                  <div className="flex items-center gap-4 mt-4">
+                    {project.links?.map((link, linkIndex) => (
+                      <a key={linkIndex} href={link.url} target="_blank" className="flex items-center gap-2 hover:text-indigo-600 transition-colors">
+                        {link.label.toLowerCase() === 'github' && <Github className="w-5 h-5" />}
+                        {link.label.toLowerCase() === 'youtube' && <Youtube className="w-5 h-5" />}
+                        {link.label.toLowerCase() !== 'github' && link.label.toLowerCase() !== 'youtube' && <Link className="w-5 h-5" />}
+                        <span className="text-xs font-bold">{link.label}</span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
