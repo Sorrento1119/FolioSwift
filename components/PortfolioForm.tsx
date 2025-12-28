@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { PortfolioData, Project, GalleryItem, Experience, CustomLink, Certification, ProjectLink, Achievement, AchievementLink } from '../types';
-import { Plus, Trash2, Github, Linkedin, Instagram, Camera, GraduationCap, Briefcase, User, Sparkles, Image as ImageIcon, X, Tag, Settings, Phone, MapPin, ExternalLink, Link as LinkIcon, Twitter, Award, FileText, Upload, Youtube, Star, Facebook } from 'lucide-react';
+import { Plus, Trash2, Github, Linkedin, Instagram, Camera, GraduationCap, Briefcase, User, Sparkles, Image as ImageIcon, X, Tag, Settings, Phone, MapPin, ExternalLink, Link as LinkIcon, Twitter, Award, FileText, Upload, Youtube, Star, Facebook, ArrowRight } from 'lucide-react';
 
 interface Props {
   initialData: PortfolioData;
@@ -149,7 +149,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
 
   const addProject = () => setData(prev => ({ ...prev, projects: [...prev.projects, { title: '', description: '', links: [], techStack: [] }] }));
   const removeProject = (index: number) => setData(prev => ({ ...prev, projects: prev.projects.filter((_, i) => i !== index) }));
-  
+
   const addExperience = () => setData(prev => ({ ...prev, experiences: [...prev.experiences, { role: '', company: '', period: '', description: '' }] }));
   const removeExperience = (index: number) => setData(prev => ({ ...prev, experiences: prev.experiences.filter((_, i) => i !== index) }));
 
@@ -215,7 +215,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
         </div>
         <h4 className="font-bold text-slate-900 mb-2">Upload your resume (PDF/Image)</h4>
         <p className="text-slate-400 text-sm mb-6">Or provide a direct link to your Google Drive / Dropbox below.</p>
-        
+
         <div className="w-full max-w-md space-y-4">
           <label className="block w-full cursor-pointer bg-slate-900 text-white font-black py-3 rounded-xl hover:bg-slate-800 transition-all">
             {data.resume ? 'Change Resume File' : 'Choose File'}
@@ -226,11 +226,11 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
             <span className="text-[10px] font-black text-slate-300 uppercase">Or link</span>
             <div className="h-px flex-1 bg-slate-100"></div>
           </div>
-          <input 
-            type="url" name="resume" value={data.resume?.startsWith('data:') ? '' : data.resume} 
-            onChange={handleChange} 
-            placeholder="Direct URL to Resume" 
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none" 
+          <input
+            type="url" name="resume" value={data.resume?.startsWith('data:') ? '' : data.resume}
+            onChange={handleChange}
+            placeholder="Direct URL to Resume"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none"
           />
         </div>
       </div>
@@ -238,11 +238,11 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
       <SectionTitle icon={Phone} title="Contact Information" optional />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><Phone className="w-3 h-3"/> Phone Number</label>
+          <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><Phone className="w-3 h-3" /> Phone Number</label>
           <input type="tel" name="phone" value={data.phone} onChange={handleChange} placeholder="+1 (555) 000-0000" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><MapPin className="w-3 h-3"/> Location</label>
+          <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><MapPin className="w-3 h-3" /> Location</label>
           <input type="text" name="address" value={data.address} onChange={handleChange} placeholder="City, Country" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
         </div>
       </div>
@@ -313,7 +313,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
                 <input type="url" placeholder="Credential Link (Optional)" value={cert.link || ''} onChange={(e) => handleCertificationChange(index, 'link', e.target.value)} className="w-full px-4 py-2 rounded-lg border outline-none text-xs" />
                 <textarea placeholder="Brief description (Optional)" rows={2} value={cert.description || ''} onChange={(e) => handleCertificationChange(index, 'description', e.target.value)} className="md:col-span-2 w-full px-4 py-2 rounded-lg border outline-none resize-none text-sm" />
               </div>
-              
+
               <div className="w-full md:w-32 h-32 flex-shrink-0 bg-white border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden relative group/img">
                 {cert.image ? (
                   <img src={cert.image} className="w-full h-full object-cover" />
@@ -325,9 +325,9 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
                   </label>
                 )}
                 {cert.image && (
-                   <button type="button" onClick={() => handleCertificationChange(index, 'image', '')} className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
-                     <Trash2 className="text-white w-5 h-5" />
-                   </button>
+                  <button type="button" onClick={() => handleCertificationChange(index, 'image', '')} className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
+                    <Trash2 className="text-white w-5 h-5" />
+                  </button>
                 )}
               </div>
             </div>
@@ -377,7 +377,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
                   <button type="button" onClick={() => addAchievementLink(index)} className="flex items-center gap-2 text-indigo-600 font-bold text-sm px-2 py-1 hover:bg-indigo-50 rounded-lg"><Plus className="w-4 h-4" /> Add Link</button>
                 </div>
               </div>
-              
+
               <div className="w-full md:w-32 h-32 flex-shrink-0 bg-white border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden relative group/img">
                 {achievement.image ? (
                   <img src={achievement.image} className="w-full h-full object-cover" />
@@ -389,9 +389,9 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
                   </label>
                 )}
                 {achievement.image && (
-                   <button type="button" onClick={() => handleAchievementChange(index, 'image', '')} className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
-                     <Trash2 className="text-white w-5 h-5" />
-                   </button>
+                  <button type="button" onClick={() => handleAchievementChange(index, 'image', '')} className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
+                    <Trash2 className="text-white w-5 h-5" />
+                  </button>
                 )}
               </div>
             </div>
@@ -496,8 +496,8 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
       </div>
 
       <div className="pt-10">
-        <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all">
-          NEXT STEP
+        <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3">
+          NEXT: VIDEO INTRO <ArrowRight className="w-5 h-5" />
         </button>
       </div>
     </form>

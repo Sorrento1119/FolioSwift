@@ -4,6 +4,7 @@ import { PortfolioData, AnimationType, ThemeType, SectionId, UIStyle, FontFamily
 import PortfolioForm from './components/PortfolioForm';
 import PriorityEditor from './components/PriorityEditor';
 import AnimationEditor from './components/AnimationEditor';
+import VSLEditor from './components/VSLEditor';
 import PortfolioPreview from './components/PortfolioPreview';
 import TemplateTwo from './components/templates/TemplateTwo';
 import { SavedSite, storage } from './utils/storage';
@@ -28,7 +29,7 @@ const INITIAL_DATA: PortfolioData = {
   linkedin: '',
   github: '',
   instagram: '',
-  sectionOrder: ['about', 'resume', 'skills', 'experience', 'projects', 'certifications', 'achievements', 'education', 'gallery'],
+  sectionOrder: ['vsl', 'about', 'resume', 'skills', 'experience', 'projects', 'certifications', 'achievements', 'education', 'gallery'],
   sectionTitles: {},
   navbarEnabled: true,
   settings: {
@@ -43,14 +44,48 @@ const INITIAL_DATA: PortfolioData = {
     headingFont: FontFamily.JAKARTA,
     bodyFont: FontFamily.INTER,
     sectionColors: {}
+  },
+  vslUrl: '',
+  vslAutoplay: false,
+  vslShowPlayer: true
+};
+
+const ensureCompleteData = (d: PortfolioData): PortfolioData => {
+  const allSections: SectionId[] = ['vsl', 'about', 'resume', 'skills', 'experience', 'projects', 'certifications', 'achievements', 'education', 'gallery'];
+  const currentOrder = d.sectionOrder || [];
+
+  // For new sites or migrated sites, ensure all sections are present
+  let newOrder = [...currentOrder];
+
+  // Ensure 'vsl' is specifically before 'about' if missing
+  if (!newOrder.includes('vsl')) {
+    const aboutIndex = newOrder.indexOf('about');
+    if (aboutIndex !== -1) {
+      newOrder.splice(aboutIndex, 0, 'vsl');
+    } else {
+      newOrder.unshift('vsl');
+    }
   }
+
+  allSections.forEach(sec => {
+    if (!newOrder.includes(sec)) {
+      newOrder.push(sec);
+    }
+  });
+
+  return {
+    ...INITIAL_DATA,
+    ...d,
+    sectionOrder: newOrder as SectionId[]
+  };
 };
 
 type View = 'landing' | 'builder' | 'dashboard' | 'public';
-type Step = 'details' | 'priority' | 'animations' | 'preview';
+type Step = 'details' | 'vsl' | 'priority' | 'animations' | 'preview';
 
 const steps: { id: Step; label: string }[] = [
   { id: 'details', label: 'Details' },
+  { id: 'vsl', label: 'Video Intro' },
   { id: 'priority', label: 'Priority' },
   { id: 'animations', label: 'Style' },
   { id: 'preview', label: 'Preview' },
@@ -70,38 +105,38 @@ const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', on
     setMode(initialMode);
     setError('');
   }, [initialMode, isOpen]);
-  
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
+    e.preventDefault();
+    setError('');
 
-  if (!email || !password) {
-    setError('Both email and password are required');
-    return;
-  }
-
-  try {
-    if (mode === 'signup') {
-      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
-      if (signUpError) throw signUpError;
-      if (data.user) {
-        localStorage.setItem('folioswift_session', email);
-        onAuth({ email });
-      }
-    } else {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) throw signInError;
-      if (data.user) {
-        localStorage.setItem('folioswift_session', email);
-        onAuth({ email });
-      }
+    if (!email || !password) {
+      setError('Both email and password are required');
+      return;
     }
-  } catch (err: any) {
-    setError(err.message || 'An authentication error occurred');
-  }
-};
+
+    try {
+      if (mode === 'signup') {
+        const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+        if (signUpError) throw signUpError;
+        if (data.user) {
+          localStorage.setItem('folioswift_session', email);
+          onAuth({ email });
+        }
+      } else {
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) throw signInError;
+        if (data.user) {
+          localStorage.setItem('folioswift_session', email);
+          onAuth({ email });
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || 'An authentication error occurred');
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
@@ -114,7 +149,7 @@ const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', on
             {mode === 'login' ? 'Welcome Back' : 'Join FolioSwift'}
           </h2>
           <p className="text-slate-500 mb-8 font-medium">Building your career starts with a great landing page.</p>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 bg-red-50 text-red-600 rounded-xl text-xs font-bold flex items-center gap-2">
@@ -123,17 +158,17 @@ const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', on
             )}
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-              <input 
+              <input
                 type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@university.edu" 
+                placeholder="you@university.edu"
                 className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Secure Password</label>
-              <input 
+              <input
                 type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••" 
+                placeholder="••••••••"
                 className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
               />
             </div>
@@ -141,7 +176,7 @@ const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', on
               {mode === 'login' ? 'Continue to Dashboard' : 'Create My Account'}
             </button>
           </form>
-          
+
           <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); }} className="w-full mt-6 text-sm font-bold text-slate-400 hover:text-indigo-600 transition-colors">
             {mode === 'login' ? "Don't have an account? Sign up" : "Already registered? Sign in"}
           </button>
@@ -167,29 +202,29 @@ const App: React.FC = () => {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
   useEffect(() => {
-  const initApp = async () => { // Create an async function inside
-    const path = window.location.pathname;
-    if (path.startsWith('/p/')) {
-      const slug = path.split('/p/')[1];
-      const saved = await storage.getSite(slug); // Added 'await'
-      if (saved) {
-        setPublicData({ ...INITIAL_DATA, ...saved });
-        setView('public');
+    const initApp = async () => { // Create an async function inside
+      const path = window.location.pathname;
+      if (path.startsWith('/p/')) {
+        const slug = path.split('/p/')[1];
+        const saved = await storage.getSite(slug); // Added 'await'
+        if (saved) {
+          setPublicData(ensureCompleteData(saved));
+          setView('public');
+        }
       }
-    }
-  };
-  initApp();
-}, []);
+    };
+    initApp();
+  }, []);
 
-useEffect(() => {
-  if (user && view === 'dashboard') {
-    setIsLoadingSites(true);
-    storage.getUserSites(user.email).then(sites => {
-      setUserSites(sites);
-      setIsLoadingSites(false);
-    });
-  }
-}, [user, view]);
+  useEffect(() => {
+    if (user && view === 'dashboard') {
+      setIsLoadingSites(true);
+      storage.getUserSites(user.email).then(sites => {
+        setUserSites(sites);
+        setIsLoadingSites(false);
+      });
+    }
+  }, [user, view]);
 
   const openAuth = (mode: 'login' | 'signup') => {
     setAuthMode(mode);
@@ -226,59 +261,59 @@ useEffect(() => {
 
   if (view === 'landing') return (
     <div className="min-h-screen bg-white flex flex-col font-['Plus_Jakarta_Sans']">
-       <AuthModal isOpen={isAuthOpen} initialMode={authMode} onClose={() => setIsAuthOpen(false)} onAuth={handleAuth} />
-       
-       <header className="px-8 md:px-12 h-24 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#6366f1] p-2 rounded-lg">
-              <Sparkles className="text-white w-5 h-5" />
-            </div>
-            <span className="text-xl font-black tracking-tighter text-slate-900">FolioSwift</span>
+      <AuthModal isOpen={isAuthOpen} initialMode={authMode} onClose={() => setIsAuthOpen(false)} onAuth={handleAuth} />
+
+      <header className="px-8 md:px-12 h-24 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="bg-[#6366f1] p-2 rounded-lg">
+            <Sparkles className="text-white w-5 h-5" />
           </div>
-          <div className="flex items-center gap-6">
-             <button onClick={() => openAuth('login')} className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Login</button>
-             <button onClick={() => openAuth('signup')} className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">Get Started</button>
+          <span className="text-xl font-black tracking-tighter text-slate-900">FolioSwift</span>
+        </div>
+        <div className="flex items-center gap-6">
+          <button onClick={() => openAuth('login')} className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Login</button>
+          <button onClick={() => openAuth('signup')} className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">Get Started</button>
+        </div>
+      </header>
+
+      <main className="flex-grow flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-5xl space-y-8 animate-in fade-in zoom-in duration-1000">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-[#f0f2ff] px-5 py-1.5 rounded-full border border-[#e0e4ff] mb-4">
+            <Sparkles className="w-3.5 h-3.5 text-[#6366f1]" />
+            <span className="text-[#6366f1] font-black uppercase tracking-[0.1em] text-[10px]">Resume to website within minutes</span>
           </div>
-       </header>
 
-       <main className="flex-grow flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-5xl space-y-8 animate-in fade-in zoom-in duration-1000">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-[#f0f2ff] px-5 py-1.5 rounded-full border border-[#e0e4ff] mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-[#6366f1]" />
-              <span className="text-[#6366f1] font-black uppercase tracking-[0.1em] text-[10px]">Resume to website within minutes</span>
-            </div>
+          {/* Main Heading */}
+          <h1 className="text-[52px] md:text-[88px] font-[1000] text-slate-900 tracking-[-0.04em] leading-[0.95] max-w-5xl mx-auto">
+            Stop Sending Boring Resumes.<br />
+            Share a <span className="text-[#6366f1]">Website</span> Instead.
+          </h1>
 
-            {/* Main Heading */}
-            <h1 className="text-[52px] md:text-[88px] font-[1000] text-slate-900 tracking-[-0.04em] leading-[0.95] max-w-5xl mx-auto">
-              Stop Sending Boring Resumes.<br />
-              Share a <span className="text-[#6366f1]">Website</span> Instead.
-            </h1>
+          {/* Subheading */}
+          <p className="text-lg md:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
+            Built for students who want to stand out without wasting hours on code. <br className="hidden md:block" />
+            Your professional story, instantly beautiful.
+          </p>
 
-            {/* Subheading */}
-            <p className="text-lg md:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
-              Built for students who want to stand out without wasting hours on code. <br className="hidden md:block" />
-              Your professional story, instantly beautiful.
-            </p>
-
-            {/* Main CTA */}
-            <div className="pt-8">
-              <button 
-                onClick={() => user ? setView('builder') : openAuth('signup')} 
-                className="bg-[#6366f1] text-white px-10 py-5 rounded-2xl font-black text-lg shadow-[0_20px_50px_-12px_rgba(99,102,241,0.5)] hover:scale-105 hover:bg-[#5558e6] transition-all flex items-center gap-3 mx-auto"
-              >
-                Start Building Now <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
+          {/* Main CTA */}
+          <div className="pt-8">
+            <button
+              onClick={() => user ? setView('builder') : openAuth('signup')}
+              className="bg-[#6366f1] text-white px-10 py-5 rounded-2xl font-black text-lg shadow-[0_20px_50px_-12px_rgba(99,102,241,0.5)] hover:scale-105 hover:bg-[#5558e6] transition-all flex items-center gap-3 mx-auto"
+            >
+              Start Building Now <ArrowRight className="w-5 h-5" />
+            </button>
           </div>
-       </main>
+        </div>
+      </main>
 
-       {/* Footer Features */}
-       <footer className="py-16 flex justify-center items-center gap-12 md:gap-32">
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">No Coding</span>
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Mobile Ready</span>
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Fully Personalized</span>
-       </footer>
+      {/* Footer Features */}
+      <footer className="py-16 flex justify-center items-center gap-12 md:gap-32">
+        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">No Coding</span>
+        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Mobile Ready</span>
+        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Fully Personalized</span>
+      </footer>
     </div>
   );
 
@@ -287,13 +322,13 @@ useEffect(() => {
     return (
       <div className="min-h-screen bg-slate-50">
         <header className="bg-white border-b h-20 flex items-center justify-between px-8">
-           <div className="flex items-center gap-3">
-             <Sparkles className="text-indigo-600 w-6 h-6" />
-             <span className="text-xl font-black tracking-tighter">FolioSwift</span>
-           </div>
-           <button onClick={handleLogout} className="flex items-center gap-2 text-slate-400 font-bold hover:text-red-500 transition-colors">
-             Log Out <LogOut className="w-4 h-4" />
-           </button>
+          <div className="flex items-center gap-3">
+            <Sparkles className="text-indigo-600 w-6 h-6" />
+            <span className="text-xl font-black tracking-tighter">FolioSwift</span>
+          </div>
+          <button onClick={handleLogout} className="flex items-center gap-2 text-slate-400 font-bold hover:text-red-500 transition-colors">
+            Log Out <LogOut className="w-4 h-4" />
+          </button>
         </header>
         <main className="max-w-5xl mx-auto py-12 px-6">
           <div className="flex justify-between items-end mb-12">
@@ -303,12 +338,12 @@ useEffect(() => {
             </div>
             <div className="flex gap-4">
               {userSites.length === 0 && (
-              <button 
-                onClick={() => { setData(INITIAL_DATA); setCurrentSlug(null); setView('builder'); setStep('details'); }} 
-                className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black flex items-center gap-2 shadow-lg hover:bg-indigo-700"
-              >
-                <Plus className="w-5 h-5" /> New Portfolio
-              </button>
+                <button
+                  onClick={() => { setData(INITIAL_DATA); setCurrentSlug(null); setView('builder'); setStep('details'); }}
+                  className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black flex items-center gap-2 shadow-lg hover:bg-indigo-700"
+                >
+                  <Plus className="w-5 h-5" /> New Portfolio
+                </button>
               )}
             </div>
           </div>
@@ -327,13 +362,13 @@ useEffect(() => {
                 <h3 className="text-2xl font-black text-slate-900 mb-1">{site.data.name}</h3>
                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest truncate">{currentHost}/p/{site.slug}</p>
                 <div className="flex gap-2 mt-8">
-                  <button 
-                    onClick={() => { setData(site.data); setCurrentSlug(site.slug); setView('builder'); setStep('preview'); }} 
+                  <button
+                    onClick={() => { setData(ensureCompleteData(site.data)); setCurrentSlug(site.slug); setView('builder'); setStep('preview'); }}
                     className="w-full bg-slate-50 text-slate-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-colors"
                   >
                     Edit Portfolio
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleDelete(site.slug)}
                     className="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-colors"
                   >
@@ -387,9 +422,10 @@ useEffect(() => {
       </header>
       <main className="flex-grow max-w-5xl mx-auto py-12 px-4 md:px-6 w-full">
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {step === 'details' && <PortfolioForm initialData={data} onSubmit={(d) => { setData(d); setStep('priority'); }} />}
-          {step === 'priority' && <div className="max-w-2xl mx-auto"><PriorityEditor order={data.sectionOrder} titles={data.sectionTitles || {}} onChange={(o, t) => setData(p => ({ ...p, sectionOrder: o, sectionTitles: t }))} /><div className="flex justify-between mt-16"><button onClick={() => setStep('details')} className="font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest text-xs">Back</button><button onClick={() => setStep('animations')} className="bg-indigo-600 text-white px-10 py-5 rounded-[24px] font-black shadow-lg hover:bg-indigo-700">Next: Style It</button></div></div>}
-          {step === 'animations' && <div><AnimationEditor settings={data.settings} onChange={(s) => setData(p => ({ ...p, settings: s }))} /><div className="flex justify-between mt-16"><button onClick={() => setStep('priority')} className="font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest text-xs">Back</button><button onClick={() => setStep('preview')} className="bg-indigo-600 text-white px-12 py-5 rounded-[24px] font-black shadow-lg hover:bg-indigo-700">Go to Preview</button></div></div>}
+          {step === 'details' && <PortfolioForm initialData={data} onSubmit={(d) => { setData(d); setStep('vsl'); }} />}
+          {step === 'vsl' && <VSLEditor data={data} onChange={setData} onNext={() => setStep('priority')} onBack={() => setStep('details')} />}
+          {step === 'priority' && <div className="max-w-2xl mx-auto"><PriorityEditor order={data.sectionOrder} titles={data.sectionTitles || {}} onChange={(o, t) => setData(p => ({ ...p, sectionOrder: o, sectionTitles: t }))} /><div className="flex justify-between mt-16"><button onClick={() => setStep('vsl')} className="font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest text-xs">Back</button><button onClick={() => setStep('animations')} className="bg-indigo-600 text-white px-10 py-5 rounded-[24px] font-black shadow-lg hover:bg-indigo-700">Next: Style It</button></div></div>}
+          {step === 'animations' && <div><AnimationEditor settings={data.settings} navbarEnabled={data.navbarEnabled} onNavbarChange={(val) => setData(p => ({ ...p, navbarEnabled: val }))} onChange={(s) => setData(p => ({ ...p, settings: s }))} /><div className="flex justify-between mt-16"><button onClick={() => setStep('priority')} className="font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest text-xs">Back</button><button onClick={() => setStep('preview')} className="bg-indigo-600 text-white px-12 py-5 rounded-[24px] font-black shadow-lg hover:bg-indigo-700">Go to Preview</button></div></div>}
           {step === 'preview' && <PortfolioPreview data={data} onBack={() => setStep('animations')} isLoggedIn={!!user} userEmail={user?.email || ''} onOpenAuth={() => openAuth('login')} initialSlug={currentSlug} />}
         </div>
       </main>

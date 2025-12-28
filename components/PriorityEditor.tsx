@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SectionId } from '../types';
-import { ChevronUp, ChevronDown, User, Sparkles, Briefcase, GraduationCap, Image as ImageIcon, History, Award, FileText, Pencil } from 'lucide-react';
+import { ChevronUp, ChevronDown, User, Sparkles, Briefcase, GraduationCap, Image as ImageIcon, History, Award, FileText, Pencil, Youtube, Star } from 'lucide-react';
 
 interface Props {
   order: SectionId[];
@@ -10,6 +10,7 @@ interface Props {
 }
 
 const sectionInfo: Record<SectionId, { label: string; icon: any; desc: string }> = {
+  vsl: { label: 'Video Introduction', icon: Youtube, desc: 'A personal video intro to stand out' },
   about: { label: 'Biography', icon: User, desc: 'Your personal story and manifesto' },
   resume: { label: 'Professional Resume', icon: FileText, desc: 'Direct download or link to your CV' },
   skills: { label: 'Expertise', icon: Sparkles, desc: 'Your technical toolkit and soft skills' },
@@ -18,13 +19,14 @@ const sectionInfo: Record<SectionId, { label: string; icon: any; desc: string }>
   education: { label: 'Academic Path', icon: GraduationCap, desc: 'Universities and educational context' },
   gallery: { label: 'Visual Gallery', icon: ImageIcon, desc: 'Life photos and visual artifacts' },
   certifications: { label: 'Honors & Awards', icon: Award, desc: 'Certifications, trophies, and recognition' },
+  achievements: { label: 'Key Milestones', icon: Star, desc: 'Your major accomplishments and highlights' },
 };
 
 const PriorityEditor: React.FC<Props> = ({ order, titles, onChange }) => {
   // Ensure all sections are present in order
-  const allSections: SectionId[] = ['about', 'resume', 'skills', 'experience', 'projects', 'education', 'gallery', 'certifications'];
+  const allSections: SectionId[] = ['vsl', 'about', 'resume', 'skills', 'experience', 'projects', 'education', 'gallery', 'certifications', 'achievements'];
   const currentOrder: SectionId[] = order.filter(id => allSections.includes(id));
-  
+
   // Add missing sections if any
   allSections.forEach(id => {
     if (!currentOrder.includes(id)) currentOrder.push(id);
@@ -59,14 +61,14 @@ const PriorityEditor: React.FC<Props> = ({ order, titles, onChange }) => {
               <button onClick={() => move(index, 'up')} disabled={index === 0} className="text-slate-300 hover:text-indigo-600 disabled:opacity-30 p-1"><ChevronUp className="w-6 h-6" /></button>
               <button onClick={() => move(index, 'down')} disabled={index === currentOrder.length - 1} className="text-slate-300 hover:text-indigo-600 disabled:opacity-30 p-1"><ChevronDown className="w-6 h-6" /></button>
             </div>
-            
+
             <div className={`p-4 rounded-2xl flex-shrink-0 ${index === 0 ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors'}`}><Icon className="w-6 h-6" /></div>
-            
+
             <div className="flex-grow w-full">
               <div className="flex items-center gap-2 mb-1">
-                <input 
-                  type="text" 
-                  value={customTitle || ''} 
+                <input
+                  type="text"
+                  value={customTitle || ''}
                   onChange={(e) => handleTitleChange(id, e.target.value)}
                   placeholder={info.label}
                   className="bg-transparent border-b border-dashed border-slate-200 text-lg font-black text-slate-800 tracking-tight focus:border-indigo-500 outline-none w-full"
@@ -77,8 +79,8 @@ const PriorityEditor: React.FC<Props> = ({ order, titles, onChange }) => {
             </div>
 
             <div className="hidden lg:flex flex-col items-end text-[10px] font-black uppercase tracking-widest text-slate-300">
-               <span>Position</span>
-               <span className="text-2xl text-slate-100 font-black leading-none">{index + 1}</span>
+              <span>Position</span>
+              <span className="text-2xl text-slate-100 font-black leading-none">{index + 1}</span>
             </div>
           </div>
         );

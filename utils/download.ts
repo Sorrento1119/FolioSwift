@@ -52,14 +52,25 @@ export const generateStandaloneHTML = (data: PortfolioData): string => {
         </header>
 
         <main class="grid grid-cols-1 md:grid-cols-2 gap-6">
-           ${data.sectionOrder.map(id => {
-              if (id === 'about') return `
+            ${data.sectionOrder.map(id => {
+    if (id === 'vsl') {
+      const videoId = data.vslUrl?.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\/|watch\?v=|&v=)([^#&?]*).*/)?.[2];
+      return data.vslUrl && videoId ? `
+                  <div class="reveal glass col-span-1 md:col-span-2 p-10 overflow-hidden mb-8">
+                    <span class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-10 block">Video Introduction</span>
+                    <div class="aspect-video w-full rounded-[32px] overflow-hidden shadow-2xl border-4 border-white/20">
+                       <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=${data.vslAutoplay ? '1' : '0'}&controls=${data.vslShowPlayer ? '1' : '0'}" class="w-full h-full border-0" allowfullscreen></iframe>
+                    </div>
+                  </div>
+                ` : '';
+    }
+    if (id === 'about') return `
                 <div class="reveal glass col-span-1 md:col-span-2 p-10">
                    <span class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-6 block">Biography</span>
                    <p class="text-3xl font-black tracking-tight leading-tight">${data.bio}</p>
                 </div>
               `;
-              if (id === 'skills') return `
+    if (id === 'skills') return `
                 <div class="reveal glass p-10">
                    <span class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-6 block">Toolkit</span>
                    <div class="flex flex-wrap gap-2">
@@ -67,7 +78,7 @@ export const generateStandaloneHTML = (data: PortfolioData): string => {
                    </div>
                 </div>
               `;
-              if (id === 'projects') return `
+    if (id === 'projects') return `
                 <div class="reveal glass col-span-1 md:col-span-2 p-10">
                    <span class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-8 block">Works</span>
                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -80,8 +91,8 @@ export const generateStandaloneHTML = (data: PortfolioData): string => {
                    </div>
                 </div>
               `;
-              return '';
-           }).join('')}
+    return '';
+  }).join('')}
         </main>
     </div>
     <script>

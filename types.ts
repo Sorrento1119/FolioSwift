@@ -20,7 +20,9 @@ export enum UIStyle {
   GLASS = 'Glassmorphism',
   MINIMAL = 'Minimalist',
   NEOBRUTAL = 'Neobrutalism',
-  SWISS = 'Swiss Grid'
+  SWISS = 'Swiss Grid',
+  NEON = 'Neon Cyber',
+  EDITORIAL = 'Editorial Serif'
 }
 
 export enum FontFamily {
@@ -34,7 +36,7 @@ export enum FontFamily {
   DM_SANS = 'DM Sans'
 }
 
-export type SectionId = 'about' | 'skills' | 'projects' | 'gallery' | 'education' | 'experience' | 'certifications' | 'resume' | 'achievements';
+export type SectionId = 'vsl' | 'about' | 'skills' | 'projects' | 'gallery' | 'education' | 'experience' | 'certifications' | 'resume' | 'achievements';
 
 export interface GalleryItem {
   image: string;
@@ -77,7 +79,7 @@ export interface ProjectLink {
 export interface Project {
   title: string;
   description: string;
-  image?: string; 
+  image?: string;
   links?: ProjectLink[];
   techStack?: string[];
 }
@@ -104,7 +106,7 @@ export interface PortfolioData {
   skills: string;
   phone?: string;
   address?: string;
-  resume?: string; 
+  resume?: string;
   projects: Project[];
   achievements: Achievement[];
   experiences: Experience[];
@@ -115,6 +117,9 @@ export interface PortfolioData {
   github?: string;
   instagram?: string;
   x?: string;
+  vslUrl?: string;
+  vslAutoplay?: boolean;
+  vslShowPlayer?: boolean;
   sectionOrder: SectionId[];
   sectionTitles?: Partial<Record<SectionId, string>>;
   navbarEnabled: boolean;
