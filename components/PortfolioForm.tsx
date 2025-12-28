@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { PortfolioData, Project, GalleryItem, Experience, CustomLink, Certification, ProjectLink } from '../types';
-import { Plus, Trash2, Github, Linkedin, Instagram, Camera, GraduationCap, Briefcase, User, Sparkles, Image as ImageIcon, X, Tag, Settings, Phone, MapPin, ExternalLink, Link as LinkIcon, Twitter, Award, FileText, Upload, Youtube } from 'lucide-react';
+import { PortfolioData, Project, GalleryItem, Experience, CustomLink, Certification, ProjectLink, Achievement, AchievementLink } from '../types';
+import { Plus, Trash2, Github, Linkedin, Instagram, Camera, GraduationCap, Briefcase, User, Sparkles, Image as ImageIcon, X, Tag, Settings, Phone, MapPin, ExternalLink, Link as LinkIcon, Twitter, Award, FileText, Upload, Youtube, Star, Facebook } from 'lucide-react';
 
 interface Props {
   initialData: PortfolioData;
@@ -13,6 +13,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
     ...initialData,
     experiences: initialData.experiences || [],
     certifications: initialData.certifications || [],
+    achievements: initialData.achievements || [],
     customLinks: initialData.customLinks || [],
     projects: initialData.projects || [],
     gallery: initialData.gallery || []
@@ -43,6 +44,10 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
           const updatedCerts = [...data.certifications];
           updatedCerts[index] = { ...updatedCerts[index], image: result };
           setData(prev => ({ ...prev, certifications: updatedCerts }));
+        } else if (field === 'achievementImage' && typeof index === 'number') {
+          const updatedAchievements = [...data.achievements];
+          updatedAchievements[index] = { ...updatedAchievements[index], image: result };
+          setData(prev => ({ ...prev, achievements: updatedAchievements }));
         } else if (field === 'galleryImage') {
           setData(prev => ({
             ...prev,
@@ -58,7 +63,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
     setData(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== index) }));
   };
 
-  const handleProjectChange = (index: number, field: keyof Project, value: string) => {
+  const handleProjectChange = (index: number, field: keyof Project, value: string | string[]) => {
     const updatedProjects = [...data.projects];
     updatedProjects[index] = { ...updatedProjects[index], [field]: value };
     setData(prev => ({ ...prev, projects: updatedProjects }));
@@ -76,6 +81,12 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
     setData(prev => ({ ...prev, certifications: updatedCerts }));
   };
 
+  const handleAchievementChange = (index: number, field: keyof Achievement, value: string) => {
+    const updatedAchievements = [...data.achievements];
+    updatedAchievements[index] = { ...updatedAchievements[index], [field]: value };
+    setData(prev => ({ ...prev, achievements: updatedAchievements }));
+  };
+
   const handleCustomLinkChange = (index: number, field: keyof CustomLink, value: string) => {
     const updatedLinks = [...data.customLinks];
     updatedLinks[index] = { ...updatedLinks[index], [field]: value };
@@ -85,7 +96,11 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
   const handleProjectLinkChange = (projIndex: number, linkIndex: number, field: keyof ProjectLink, value: string) => {
     const updatedProjects = [...data.projects];
     const updatedLinks = [...(updatedProjects[projIndex].links || [])];
-    updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], [field]: value };
+    if (field === 'label' && value === 'Other') {
+      updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], label: 'Other' };
+    } else {
+      updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], [field]: value };
+    }
     updatedProjects[projIndex] = { ...updatedProjects[projIndex], links: updatedLinks };
     setData(prev => ({ ...prev, projects: updatedProjects }));
   };
@@ -105,7 +120,34 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
     setData(prev => ({ ...prev, projects: updatedProjects }));
   };
 
-  const addProject = () => setData(prev => ({ ...prev, projects: [...prev.projects, { title: '', description: '', links: [] }] }));
+  const handleAchievementLinkChange = (achIndex: number, linkIndex: number, field: keyof AchievementLink, value: string) => {
+    const updatedAchievements = [...data.achievements];
+    const updatedLinks = [...(updatedAchievements[achIndex].links || [])];
+    if (field === 'label' && value === 'Other') {
+      updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], label: 'Other' };
+    } else {
+      updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], [field]: value };
+    }
+    updatedAchievements[achIndex] = { ...updatedAchievements[achIndex], links: updatedLinks };
+    setData(prev => ({ ...prev, achievements: updatedAchievements }));
+  };
+
+  const addAchievementLink = (achIndex: number) => {
+    const updatedAchievements = [...data.achievements];
+    const updatedLinks = [...(updatedAchievements[achIndex].links || [])];
+    updatedLinks.push({ label: 'Article', url: '' });
+    updatedAchievements[achIndex] = { ...updatedAchievements[achIndex], links: updatedLinks };
+    setData(prev => ({ ...prev, achievements: updatedAchievements }));
+  };
+
+  const removeAchievementLink = (achIndex: number, linkIndex: number) => {
+    const updatedAchievements = [...data.achievements];
+    const updatedLinks = (updatedAchievements[achIndex].links || []).filter((_, i) => i !== linkIndex);
+    updatedAchievements[achIndex] = { ...updatedAchievements[achIndex], links: updatedLinks };
+    setData(prev => ({ ...prev, achievements: updatedAchievements }));
+  };
+
+  const addProject = () => setData(prev => ({ ...prev, projects: [...prev.projects, { title: '', description: '', links: [], techStack: [] }] }));
   const removeProject = (index: number) => setData(prev => ({ ...prev, projects: prev.projects.filter((_, i) => i !== index) }));
   
   const addExperience = () => setData(prev => ({ ...prev, experiences: [...prev.experiences, { role: '', company: '', period: '', description: '' }] }));
@@ -113,6 +155,9 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
 
   const addCertification = () => setData(prev => ({ ...prev, certifications: [...prev.certifications, { title: '', issuer: '', date: '' }] }));
   const removeCertification = (index: number) => setData(prev => ({ ...prev, certifications: prev.certifications.filter((_, i) => i !== index) }));
+
+  const addAchievement = () => setData(prev => ({ ...prev, achievements: [...prev.achievements, { title: '', description: '', links: [] }] }));
+  const removeAchievement = (index: number) => setData(prev => ({ ...prev, achievements: prev.achievements.filter((_, i) => i !== index) }));
 
   const addCustomLink = () => setData(prev => ({ ...prev, customLinks: [...prev.customLinks, { label: '', url: '' }] }));
   const removeCustomLink = (index: number) => setData(prev => ({ ...prev, customLinks: prev.customLinks.filter((_, i) => i !== index) }));
@@ -291,6 +336,70 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
         <button type="button" onClick={addCertification} className="flex items-center gap-2 text-indigo-600 font-bold text-sm px-2 py-2 hover:bg-indigo-50 rounded-lg"><Plus className="w-4 h-4" /> Add Certification</button>
       </div>
 
+      <SectionTitle icon={Star} title="Achievements" optional />
+      <div className="space-y-4">
+        {data.achievements.map((achievement, index) => (
+          <div key={index} className="p-6 rounded-3xl border border-slate-200 bg-slate-50 relative group">
+            <button type="button" onClick={() => removeAchievement(index)} className="absolute top-4 right-4 text-slate-300 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="flex-1 space-y-4">
+                <input type="text" placeholder="Title" value={achievement.title} onChange={(e) => handleAchievementChange(index, 'title', e.target.value)} className="w-full px-4 py-2 rounded-lg border outline-none font-bold" />
+                <textarea placeholder="Brief description" rows={3} value={achievement.description} onChange={(e) => handleAchievementChange(index, 'description', e.target.value)} className="w-full px-4 py-2 rounded-lg border outline-none resize-none text-sm" />
+                <div className="space-y-3">
+                  {achievement.links?.map((link, linkIndex) => (
+                    <div key={linkIndex} className="flex items-center gap-2">
+                      <select value={['Article', 'YouTube', 'Instagram', 'Facebook'].includes(link.label) ? link.label : 'Other'} onChange={(e) => handleAchievementLinkChange(index, linkIndex, 'label', e.target.value)} className="px-2 py-2 rounded-lg border bg-white text-xs">
+                        <option>Article</option>
+                        <option>YouTube</option>
+                        <option>Instagram</option>
+                        <option>Facebook</option>
+                        <option>Other</option>
+                      </select>
+                      {link.label === 'Other' || !['Article', 'YouTube', 'Instagram', 'Facebook'].includes(link.label) ? (
+                        <input
+                          type="text"
+                          placeholder="Custom Label"
+                          value={link.label}
+                          onChange={(e) => handleAchievementLinkChange(index, linkIndex, 'label', e.target.value)}
+                          className="flex-1 px-4 py-2 rounded-lg border outline-none text-xs"
+                        />
+                      ) : null}
+                      <input
+                        type="url"
+                        placeholder="Link URL"
+                        value={link.url}
+                        onChange={(e) => handleAchievementLinkChange(index, linkIndex, 'url', e.target.value)}
+                        className="flex-1 px-4 py-2 rounded-lg border outline-none text-xs"
+                      />
+                      <button type="button" onClick={() => removeAchievementLink(index, linkIndex)} className="text-slate-300 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => addAchievementLink(index)} className="flex items-center gap-2 text-indigo-600 font-bold text-sm px-2 py-1 hover:bg-indigo-50 rounded-lg"><Plus className="w-4 h-4" /> Add Link</button>
+                </div>
+              </div>
+              
+              <div className="w-full md:w-32 h-32 flex-shrink-0 bg-white border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden relative group/img">
+                {achievement.image ? (
+                  <img src={achievement.image} className="w-full h-full object-cover" />
+                ) : (
+                  <label className="cursor-pointer flex flex-col items-center gap-1">
+                    <Upload className="text-slate-300 w-6 h-6" />
+                    <span className="text-[10px] font-black text-slate-400">UPLOAD</span>
+                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'achievementImage', index)} className="hidden" />
+                  </label>
+                )}
+                {achievement.image && (
+                   <button type="button" onClick={() => handleAchievementChange(index, 'image', '')} className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
+                     <Trash2 className="text-white w-5 h-5" />
+                   </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        <button type="button" onClick={addAchievement} className="flex items-center gap-2 text-indigo-600 font-bold text-sm px-2 py-2 hover:bg-indigo-50 rounded-lg"><Plus className="w-4 h-4" /> Add Achievement</button>
+      </div>
+
       <SectionTitle icon={Briefcase} title="Experience" optional />
       <div className="space-y-4">
         {data.experiences.map((exp, index) => (
@@ -316,15 +425,31 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
               <div className="flex-grow space-y-4">
                 <input type="text" placeholder="Project Name" value={project.title} onChange={(e) => handleProjectChange(index, 'title', e.target.value)} className="w-full px-4 py-2 rounded-lg border outline-none font-bold" />
                 <textarea placeholder="Description" rows={2} value={project.description} onChange={(e) => handleProjectChange(index, 'description', e.target.value)} className="w-full px-4 py-2 rounded-lg border outline-none resize-none" />
+                <input
+                  type="text"
+                  placeholder="Tech Stack (comma-separated)"
+                  value={project.techStack?.join(', ')}
+                  onChange={(e) => handleProjectChange(index, 'techStack', e.target.value.split(',').map(s => s.trim()))}
+                  className="w-full px-4 py-2 rounded-lg border outline-none text-xs"
+                />
                 <div className="space-y-3">
                   {project.links?.map((link, linkIndex) => (
                     <div key={linkIndex} className="flex items-center gap-2">
-                      <select value={link.label} onChange={(e) => handleProjectLinkChange(index, linkIndex, 'label', e.target.value)} className="px-2 py-2 rounded-lg border bg-white text-xs">
+                      <select value={['GitHub', 'YouTube', 'Live Demo'].includes(link.label) ? link.label : 'Other'} onChange={(e) => handleProjectLinkChange(index, linkIndex, 'label', e.target.value)} className="px-2 py-2 rounded-lg border bg-white text-xs">
                         <option>GitHub</option>
                         <option>YouTube</option>
                         <option>Live Demo</option>
                         <option>Other</option>
                       </select>
+                      {link.label === 'Other' || !['GitHub', 'YouTube', 'Live Demo'].includes(link.label) ? (
+                        <input
+                          type="text"
+                          placeholder="Custom Label"
+                          value={link.label}
+                          onChange={(e) => handleProjectLinkChange(index, linkIndex, 'label', e.target.value)}
+                          className="flex-1 px-4 py-2 rounded-lg border outline-none text-xs"
+                        />
+                      ) : null}
                       <input
                         type="url"
                         placeholder="Link URL"

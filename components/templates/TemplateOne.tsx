@@ -1,7 +1,7 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PortfolioData, ThemeType, AnimationType, SectionId } from '../../types';
-import { Github, Linkedin, Instagram, ArrowRight, Sparkles, Youtube, Link } from 'lucide-react';
+import { Github, Linkedin, Instagram, ArrowRight, Sparkles, Youtube, Link, X } from 'lucide-react';
 
 const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const isDark = data.settings.theme === ThemeType.DARK;
@@ -10,6 +10,7 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const globalHeadingColor = data.settings.headingColor;
   const skillsList = data.skills.split(',').map(s => s.trim()).filter(Boolean);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const scrollContainer = document.getElementById('preview-scroll-container');
@@ -102,6 +103,11 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
                     {project.title} <ArrowRight className="w-8 h-8 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" style={{ color: primaryColor }} />
                   </h3>
                   <p className={`text-xl leading-relaxed font-medium mb-4`} style={{ color: sStyle.color }}>{project.description}</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.techStack?.map((tech, i) => (
+                      <span key={i} className={`px-3 py-1 text-xs font-bold rounded-full border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-100 border-slate-200'}`}>{tech}</span>
+                    ))}
+                  </div>
                   <div className="flex items-center gap-4 mt-4">
                     {project.links?.map((link, linkIndex) => (
                       <a key={linkIndex} href={link.url} target="_blank" className="flex items-center gap-2 hover:text-indigo-600 transition-colors">
@@ -161,6 +167,27 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
             </div>
           </section>
         );
+      case 'certifications':
+        return data.certifications?.length > 0 && (
+          <section key={id} style={sStyle} className="reveal mb-40 p-10 rounded-[40px]">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] mb-12 flex items-center gap-4" style={{ color: primaryColor }}>
+               {getSectionTitle('certifications', 'Certifications')} <div className={`h-px flex-1 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}></div>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {data.certifications.map((certification, i) => (
+                <div key={i} className="flex items-start gap-6">
+                  {certification.image && <img src={certification.image} className="w-24 h-24 object-cover rounded-2xl border border-slate-100 shadow-sm cursor-pointer" onClick={() => setSelectedImage(certification.image)} />}
+                  <div>
+                    <h3 className="text-xl font-bold mb-1" style={{ color: sHeadingColor }}>{certification.title}</h3>
+                    <p className="text-sm opacity-70 mb-2">{certification.issuer}</p>
+                    <p className="text-xs opacity-50">{certification.date}</p>
+                    {certification.description && <p className="text-sm opacity-70 mt-2">{certification.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
       default:
         return null;
     }
@@ -173,6 +200,21 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
 
   return (
     <div ref={containerRef} className={`min-h-full transition-colors duration-1000 relative overflow-hidden ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-900'} font-sans`}>
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-20"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button className="absolute top-10 right-10 text-white/50 hover:text-white transition-colors">
+            <X className="w-10 h-10" />
+          </button>
+          <img 
+            src={selectedImage} 
+            className="max-w-full max-h-full object-contain shadow-2xl animate-in zoom-in-95 duration-300" 
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
       <style>{`
         .reveal { 
           opacity: 0; 

@@ -22,12 +22,13 @@ const INITIAL_DATA: PortfolioData = {
   projects: [],
   experiences: [],
   certifications: [],
+  achievements: [],
   gallery: [],
   customLinks: [],
   linkedin: '',
   github: '',
   instagram: '',
-  sectionOrder: ['about', 'resume', 'skills', 'experience', 'projects', 'certifications', 'education', 'gallery'],
+  sectionOrder: ['about', 'resume', 'skills', 'experience', 'projects', 'certifications', 'achievements', 'education', 'gallery'],
   sectionTitles: {},
   navbarEnabled: true,
   settings: {
@@ -38,6 +39,7 @@ const INITIAL_DATA: PortfolioData = {
     textColor: '#475569',
     headingColor: '#0f172a',
     uiStyle: UIStyle.GLASS,
+    bentoView: true,
     headingFont: FontFamily.JAKARTA,
     bodyFont: FontFamily.INTER,
     sectionColors: {}
@@ -171,7 +173,7 @@ const App: React.FC = () => {
       const slug = path.split('/p/')[1];
       const saved = await storage.getSite(slug); // Added 'await'
       if (saved) {
-        setPublicData(saved);
+        setPublicData({ ...INITIAL_DATA, ...saved });
         setView('public');
       }
     }

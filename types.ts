@@ -34,13 +34,25 @@ export enum FontFamily {
   DM_SANS = 'DM Sans'
 }
 
-export type SectionId = 'about' | 'skills' | 'projects' | 'gallery' | 'education' | 'experience' | 'certifications' | 'resume';
+export type SectionId = 'about' | 'skills' | 'projects' | 'gallery' | 'education' | 'experience' | 'certifications' | 'resume' | 'achievements';
 
 export interface GalleryItem {
   image: string;
   caption?: string;
 }
 
+
+export interface AchievementLink {
+  label: string;
+  url: string;
+}
+
+export interface Achievement {
+  title: string;
+  description: string;
+  image?: string;
+  links?: AchievementLink[];
+}
 export interface Experience {
   role: string;
   company: string;
@@ -67,6 +79,7 @@ export interface Project {
   description: string;
   image?: string; 
   links?: ProjectLink[];
+  techStack?: string[];
 }
 
 export interface CustomLink {
@@ -93,6 +106,7 @@ export interface PortfolioData {
   address?: string;
   resume?: string; 
   projects: Project[];
+  achievements: Achievement[];
   experiences: Experience[];
   certifications: Certification[];
   gallery: GalleryItem[];
@@ -115,5 +129,6 @@ export interface PortfolioData {
     headingFont: FontFamily;
     bodyFont: FontFamily;
     sectionColors?: Record<string, SectionColor>;
+    bentoView?: boolean;
   };
 }

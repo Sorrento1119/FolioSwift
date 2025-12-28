@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PortfolioData, SectionId, UIStyle } from '../../types';
-import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2, Youtube, Link } from 'lucide-react';
+import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2, Youtube, Link, Star, Facebook } from 'lucide-react';
 
 const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const primaryColor = data.settings.primaryColor;
@@ -158,11 +158,16 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             <Title label={getSectionTitle('projects', 'Creations')} icon={Briefcase} color={sHeadingColor} />
             <div className="grid grid-cols-1 gap-16">
               {data.projects.map((p, i) => (
-                <div key={i} className="group flex flex-col md:flex-row gap-10 items-start">
-                  {p.image && <div className={`w-full md:w-64 h-44 flex-shrink-0 overflow-hidden shadow-xl ${uiStyle === UIStyle.GLASS ? 'rounded-[40px]' : 'rounded-none'}`}><img src={p.image} className="w-full h-full object-cover transition-transform group-hover:scale-110" /></div>}
+                <div key={i} className="group flex flex-col gap-10 items-start">
+                  {p.image && <div className={`w-full h-44 flex-shrink-0 overflow-hidden shadow-xl ${uiStyle === UIStyle.GLASS ? 'rounded-[40px]' : 'rounded-none'}`}><img src={p.image} className="w-full h-full object-cover transition-transform group-hover:scale-110" /></div>}
                   <div className="flex-1">
                     <h4 className="text-3xl font-black mb-4 flex items-center gap-4" style={{ color: sHeadingColor }}>{p.title}</h4>
                     <p className="text-base opacity-70 leading-relaxed mb-4" style={{ color: sStyle.color }}>{p.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {p.techStack?.map((tech, i) => (
+                        <span key={i} className={`px-3 py-1 text-xs font-bold rounded-full border ${uiStyle === UIStyle.NEOBRUTAL || uiStyle === UIStyle.SWISS ? 'border-2 border-black' : ''}`} style={{ color: primaryColor, borderColor: `${primaryColor}40` }}>{tech}</span>
+                      ))}
+                    </div>
                     <div className="flex items-center gap-4 mt-4">
                       {p.links?.map((link, linkIndex) => (
                         <a key={linkIndex} href={link.url} target="_blank" className="flex items-center gap-2 hover:text-indigo-600 transition-colors">
@@ -213,9 +218,59 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             <Title label={getSectionTitle('certifications', 'Excellence')} icon={Award} color={sHeadingColor} />
             <div className="space-y-8">
               {data.certifications.map((c, i) => (
-                <div key={i} className="flex items-center gap-6 group">
-                  <div className="p-4 rounded-2xl bg-black/5 group-hover:bg-black/10 transition-colors"><Award className="w-8 h-8 opacity-40" /></div>
-                  <div><h4 className="text-lg font-black" style={{ color: sHeadingColor }}>{c.title}</h4><p className="text-[10px] font-black uppercase opacity-40 tracking-widest">{c.issuer} • {c.date}</p></div>
+                <div key={i} className="flex flex-col items-start gap-6 group">
+                  {c.image && (
+                    <img
+                      src={c.image}
+                      className="w-full h-auto object-cover rounded-2xl border border-slate-100 shadow-sm cursor-pointer"
+                      onClick={() => setSelectedImage(c.image)}
+                    />
+                  )}
+                  <div className="flex items-center gap-6">
+                    {!c.image && <div className="p-4 rounded-2xl bg-black/5 group-hover:bg-black/10 transition-colors"><Award className="w-8 h-8 opacity-40" /></div>}
+                    <div>
+                      <h4 className="text-lg font-black" style={{ color: sHeadingColor }}>{c.title}</h4>
+                      <p className="text-[10px] font-black uppercase opacity-40 tracking-widest">{c.issuer} • {c.date}</p>
+                      {c.description && <p className="text-sm opacity-70 mt-2">{c.description}</p>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'achievements':
+        return data.achievements?.length > 0 && (
+          <div key={id} id="achievements" style={sStyle} className={`reveal ${span} transition-all ${vibe.card}`}>
+            <Title label={getSectionTitle('achievements', 'Achievements')} icon={Star} color={sHeadingColor} />
+            <div className="space-y-8">
+              {data.achievements.map((a, i) => (
+                <div key={i} className="flex flex-col items-start gap-6 group">
+                  {a.image && (
+                    <img
+                      src={a.image}
+                      className="w-full h-auto object-cover rounded-2xl border border-slate-100 shadow-sm cursor-pointer"
+                      onClick={() => setSelectedImage(a.image)}
+                    />
+                  )}
+                  <div className="flex items-center gap-6">
+                    {!a.image && <div className="p-4 rounded-2xl bg-black/5 group-hover:bg-black/10 transition-colors"><Star className="w-8 h-8 opacity-40" /></div>}
+                    <div>
+                      <h4 className="text-lg font-black" style={{ color: sHeadingColor }}>{a.title}</h4>
+                      {a.description && <p className="text-sm opacity-70 mt-2">{a.description}</p>}
+                      <div className="flex items-center gap-4 mt-4">
+                        {a.links?.map((link, linkIndex) => (
+                          <a key={linkIndex} href={link.url} target="_blank" className="flex items-center gap-2 hover:text-indigo-600 transition-colors">
+                            {link.label.toLowerCase() === 'youtube' && <Youtube className="w-5 h-5" />}
+                            {link.label.toLowerCase() === 'instagram' && <Instagram className="w-5 h-5" />}
+                            {link.label.toLowerCase() === 'facebook' && <Facebook className="w-5 h-5" />}
+                            {link.label.toLowerCase() !== 'youtube' && link.label.toLowerCase() !== 'instagram' && link.label.toLowerCase() !== 'facebook' && <Link className="w-5 h-5" />}
+                            <span className="text-xs font-bold">{link.label}</span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -310,25 +365,55 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             </div>
           </>
         ) : (
-          <div className={vibe.grid}>
-            {data.sectionOrder.map(renderSection)}
-            <div className={`reveal ${vibe.card}`} style={contactStyles}>
-               <Title label="Connection" icon={Phone} color={contactHeadingColor} />
-               <div className="flex flex-wrap gap-6 mb-12">
+          data.settings.bentoView && (uiStyle === UIStyle.GLASS || uiStyle === UIStyle.NEOBRUTAL) ? (
+            <>
+              {data.sectionOrder.includes('about') && renderSection('about')}
+              <div className="flex gap-12">
+                <div className="w-1/2 space-y-12">
+                  {data.sectionOrder.filter(id => id !== 'about').filter((_, i) => i % 2 === 0).map(id => renderSection(id))}
+                </div>
+                <div className="w-1/2 space-y-12">
+                  {data.sectionOrder.filter(id => id !== 'about').filter((_, i) => i % 2 !== 0).map(id => renderSection(id))}
+                  <div className={`reveal ${vibe.card}`} style={contactStyles}>
+                    <Title label="Connection" icon={Phone} color={contactHeadingColor} />
+                    <div className="flex flex-wrap gap-6 mb-12">
+                      {[
+                        { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' },
+                        { id: 'github', icon: Github, link: data.github, color: '#171515' },
+                        { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' },
+                        { id: 'x', icon: Twitter, link: data.x, color: '#000' }
+                      ].filter(s => s.link).map(s => (
+                        <a key={s.id} href={s.link} target="_blank" className={`w-16 h-16 flex items-center justify-center border bg-white shadow-xl transition-all hover:scale-110 hover:-rotate-2 ${uiStyle === UIStyle.GLASS ? 'rounded-[24px]' : 'rounded-none border-[3px] border-black'}`}>
+                          <s.icon className="w-7 h-7" style={{ color: s.color }} />
+                        </a>
+                      ))}
+                    </div>
+                    <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-30 leading-loose" style={{ color: contactStyles.color }}>{data.phone} <br /> {data.address}</div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className={`${vibe.grid} ${data.settings.bentoView ? 'items-start' : ''}`}>
+              {data.sectionOrder.map(renderSection)}
+              <div className={`reveal ${vibe.card}`} style={contactStyles}>
+                <Title label="Connection" icon={Phone} color={contactHeadingColor} />
+                <div className="flex flex-wrap gap-6 mb-12">
                   {[
-                    { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' }, 
-                    { id: 'github', icon: Github, link: data.github, color: '#171515' }, 
-                    { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' }, 
+                    { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' },
+                    { id: 'github', icon: Github, link: data.github, color: '#171515' },
+                    { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' },
                     { id: 'x', icon: Twitter, link: data.x, color: '#000' }
                   ].filter(s => s.link).map(s => (
                     <a key={s.id} href={s.link} target="_blank" className={`w-16 h-16 flex items-center justify-center border bg-white shadow-xl transition-all hover:scale-110 hover:-rotate-2 ${uiStyle === UIStyle.GLASS ? 'rounded-[24px]' : 'rounded-none border-[3px] border-black'}`}>
                       <s.icon className="w-7 h-7" style={{ color: s.color }} />
                     </a>
                   ))}
-               </div>
-               <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-30 leading-loose" style={{ color: contactStyles.color }}>{data.phone} <br /> {data.address}</div>
+                </div>
+                <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-30 leading-loose" style={{ color: contactStyles.color }}>{data.phone} <br /> {data.address}</div>
+              </div>
             </div>
-          </div>
+          )
         )}
 
         <footer className={`reveal py-40 text-center opacity-20 ${uiStyle === UIStyle.SWISS ? 'md:col-span-12 border-r border-b border-black/10' : ''}`} style={{ color: globalBodyTextColor }}>

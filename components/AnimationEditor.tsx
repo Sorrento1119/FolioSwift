@@ -15,6 +15,7 @@ interface Props {
     headingFont: FontFamily;
     bodyFont: FontFamily;
     sectionColors?: Record<string, { bg: string; text: string; heading: string }>;
+    bentoView?: boolean;
   };
   onChange: (settings: any) => void;
 }
@@ -224,6 +225,21 @@ const AnimationEditor: React.FC<Props> = ({ settings, onChange }) => {
               {style}
             </button>
           ))}
+        </div>
+        <div className="mt-8">
+            <label className="flex items-center justify-between cursor-pointer">
+                <span className="text-sm font-bold text-slate-700">Bento View</span>
+                <div className="relative">
+                    <input
+                        type="checkbox"
+                        checked={settings.bentoView}
+                        onChange={(e) => update('bentoView', e.target.checked)}
+                        className="sr-only"
+                    />
+                    <div className="block bg-gray-200 w-14 h-8 rounded-full"></div>
+                    <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${settings.bentoView ? 'transform translate-x-6' : ''}`}></div>
+                </div>
+            </label>
         </div>
       </div>
     </div>
