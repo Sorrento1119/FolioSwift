@@ -4,6 +4,7 @@ export const generateStandaloneHTML = (data: PortfolioData): string => {
   const isDark = data.settings.theme === ThemeType.DARK;
   const primaryColor = data.settings.primaryColor;
   const skillsList = data.skills.split(',').map(s => s.trim()).filter(Boolean);
+  const softSkillsList = data.softSkills.split(',').map(s => s.trim()).filter(Boolean);
   // Fix: data.settings contains headingFont and bodyFont instead of fontFamily
   const bodyFont = data.settings.bodyFont;
   const headingFont = data.settings.headingFont;
@@ -73,9 +74,22 @@ export const generateStandaloneHTML = (data: PortfolioData): string => {
     if (id === 'skills') return `
                 <div class="reveal glass p-10">
                    <span class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-6 block">Toolkit</span>
-                   <div class="flex flex-wrap gap-2">
-                      ${skillsList.map(s => `<span class="px-4 py-2 rounded-xl text-xs font-bold ${isDark ? 'bg-slate-800' : 'bg-slate-50 border'}">${s}</span>`).join('')}
+                   ${skillsList.length > 0 ? `
+                   <div class="mb-6">
+                      <h4 class="text-sm font-black uppercase tracking-widest opacity-60 mb-3">Technical Skills</h4>
+                      <div class="flex flex-wrap gap-2">
+                         ${skillsList.map(s => `<span class="px-4 py-2 rounded-xl text-xs font-bold ${isDark ? 'bg-slate-800' : 'bg-slate-50 border'}">${s}</span>`).join('')}
+                      </div>
                    </div>
+                   ` : ''}
+                   ${softSkillsList.length > 0 ? `
+                   <div>
+                      <h4 class="text-sm font-black uppercase tracking-widest opacity-60 mb-3">Soft Skills</h4>
+                      <div class="flex flex-wrap gap-2">
+                         ${softSkillsList.map(s => `<span class="px-4 py-2 rounded-xl text-xs font-bold ${isDark ? 'bg-slate-800' : 'bg-slate-50 border'}">${s}</span>`).join('')}
+                      </div>
+                   </div>
+                   ` : ''}
                 </div>
               `;
     if (id === 'projects') return `

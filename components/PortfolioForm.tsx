@@ -292,6 +292,10 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
         <label className="text-sm font-bold text-slate-700">Technical Skills (Comma Separated)</label>
         <input required type="text" name="skills" value={data.skills} onChange={handleChange} placeholder="React, Python, Figma, UI/UX..." className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
       </div>
+      <div className="space-y-2">
+        <label className="text-sm font-bold text-slate-700">Soft Skills (Comma Separated)</label>
+        <input type="text" name="softSkills" value={data.softSkills} onChange={handleChange} placeholder="Communication, Leadership, Problem Solving..." className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
+      </div>
 
       <SectionTitle icon={GraduationCap} title="Education" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

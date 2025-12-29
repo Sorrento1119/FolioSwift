@@ -104,6 +104,7 @@ export interface PortfolioData {
   education: string;
   educationImage?: string;
   skills: string;
+  softSkills: string;
   phone?: string;
   address?: string;
   email?: string;

@@ -19,6 +19,7 @@ const INITIAL_DATA: PortfolioData = {
   education: '',
   educationImage: '',
   skills: '',
+  softSkills: '',
   resume: '',
   projects: [],
   experiences: [],
@@ -77,7 +78,7 @@ const ensureCompleteData = (d: PortfolioData): PortfolioData => {
   };
 };
 
-type View = 'landing' | 'builder' | 'dashboard' | 'public';
+type View = 'landing' | 'builder' | 'dashboard' | 'public' | 'loading';
 type Step = 'details' | 'vsl' | 'priority' | 'animations' | 'preview';
 
 const steps: { id: Step; label: string }[] = [
@@ -88,9 +89,35 @@ const steps: { id: Step; label: string }[] = [
   { id: 'preview', label: 'Preview' },
 ];
 
-interface User {
-  email: string;
-}
+const LoadingScreen: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center">
+      <div className="text-center space-y-8">
+        {/* Simple loading spinner */}
+        <div className="flex justify-center">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-indigo-400 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <h2 className="text-2xl font-black text-slate-900">Loading Portfolio</h2>
+          <p className="text-slate-500 font-medium">Preparing your professional story...</p>
+        </div>
+        
+        {/* Loading dots */}
+        <div className="flex justify-center">
+          <div className="flex space-x-2">
+            <div className="w-3 h-3 bg-indigo-600 rounded-full animate-pulse"></div>
+            <div className="w-3 h-3 bg-indigo-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-3 h-3 bg-indigo-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', onClose: () => void, onAuth: (user: User) => void }> = ({ isOpen, initialMode, onClose, onAuth }) => {
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
@@ -191,6 +218,7 @@ const App: React.FC = () => {
   const [isLoadingSites, setIsLoadingSites] = useState(false);
   const [view, setView] = useState<View>('landing');
   const [publicData, setPublicData] = useState<PortfolioData | null>(null);
+  const [isLoadingPublic, setIsLoadingPublic] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [data, setData] = useState<PortfolioData>(INITIAL_DATA);
   const [currentSlug, setCurrentSlug] = useState<string | null>(null);
@@ -202,12 +230,17 @@ const App: React.FC = () => {
     const initApp = async () => { // Create an async function inside
       const path = window.location.pathname;
       if (path.startsWith('/p/')) {
+        setIsLoadingPublic(true);
+        setView('loading');
         const slug = path.split('/p/')[1];
         const saved = await storage.getSite(slug); // Added 'await'
         if (saved) {
           setPublicData(ensureCompleteData(saved));
           setView('public');
+        } else {
+          setView('landing'); // If not found, go to landing
         }
+        setIsLoadingPublic(false);
       }
     };
     initApp();
@@ -253,6 +286,8 @@ const App: React.FC = () => {
   };
 
   const currentHost = window.location.host;
+
+  if (view === 'loading') return <LoadingScreen />;
 
   if (view === 'public' && publicData) return <TemplateTwo data={publicData} />;
 

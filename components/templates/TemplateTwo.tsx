@@ -9,6 +9,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const globalBodyTextColor = data.settings.textColor;
   const globalHeadingColor = data.settings.headingColor;
   const skillsList = data.skills.split(',').map(s => s.trim()).filter(Boolean);
+  const softSkillsList = data.softSkills.split(',').map(s => s.trim()).filter(Boolean);
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -164,11 +165,26 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
         return (
           <div key={id} id="skills" style={sStyle} className={`reveal ${span} transition-all ${vibe.card}`}>
             <Title label={getSectionTitle('skills', 'Toolbox')} icon={Sparkles} color={sHeadingColor} />
-            <div className="flex flex-wrap gap-4">
-              {skillsList.map((skill, i) => (
-                <span key={i} className={`px-6 py-4 text-xs font-black border transition-all ${uiStyle === UIStyle.NEOBRUTAL || uiStyle === UIStyle.SWISS ? 'rounded-none border-[3px] border-black' : 'rounded-3xl'}`} style={{ color: sStyle.color, borderColor: `${primaryColor}40` }}>{skill}</span>
-              ))}
-            </div>
+            {skillsList.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-3">Technical Skills</h4>
+                <div className="flex flex-wrap gap-4">
+                  {skillsList.map((skill, i) => (
+                    <span key={i} className={`px-6 py-4 text-xs font-black border transition-all ${uiStyle === UIStyle.NEOBRUTAL || uiStyle === UIStyle.SWISS ? 'rounded-none border-[3px] border-black' : 'rounded-3xl'}`} style={{ color: sStyle.color, borderColor: `${primaryColor}40` }}>{skill}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {softSkillsList.length > 0 && (
+              <div>
+                <h4 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-3">Soft Skills</h4>
+                <div className="flex flex-wrap gap-4">
+                  {softSkillsList.map((skill, i) => (
+                    <span key={i} className={`px-6 py-4 text-xs font-black border transition-all ${uiStyle === UIStyle.NEOBRUTAL || uiStyle === UIStyle.SWISS ? 'rounded-none border-[3px] border-black' : 'rounded-3xl'}`} style={{ color: sStyle.color, borderColor: `${primaryColor}40` }}>{skill}</span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         );
       case 'experience':
