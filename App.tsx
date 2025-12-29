@@ -103,7 +103,6 @@ const LoadingScreen: React.FC = () => {
         
         <div className="space-y-2">
           <h2 className="text-2xl font-black text-slate-900">Loading Portfolio</h2>
-          <p className="text-slate-500 font-medium">Preparing your professional story...</p>
         </div>
         
         {/* Loading dots */}
