@@ -245,6 +245,14 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
           <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><MapPin className="w-3 h-3" /> Location</label>
           <input type="text" name="address" value={data.address} onChange={handleChange} placeholder="City, Country" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
         </div>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700 flex items-center gap-2">📧 Email</label>
+          <input type="email" name="email" value={data.email} onChange={handleChange} placeholder="your.email@example.com" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700 flex items-center gap-2">💬 WhatsApp</label>
+          <input type="tel" name="whatsapp" value={data.whatsapp} onChange={handleChange} placeholder="+1234567890" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
+        </div>
       </div>
 
       <SectionTitle icon={LinkIcon} title="Social Links & Presets" optional />

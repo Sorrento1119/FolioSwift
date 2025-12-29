@@ -29,7 +29,7 @@ const INITIAL_DATA: PortfolioData = {
   linkedin: '',
   github: '',
   instagram: '',
-  sectionOrder: ['vsl', 'about', 'resume', 'skills', 'experience', 'projects', 'certifications', 'achievements', 'education', 'gallery'],
+  sectionOrder: ['vsl', 'about', 'skills', 'experience', 'projects', 'achievements', 'certifications', 'gallery', 'resume', 'contact'],
   sectionTitles: {},
   navbarEnabled: true,
   settings: {
@@ -51,27 +51,24 @@ const INITIAL_DATA: PortfolioData = {
 };
 
 const ensureCompleteData = (d: PortfolioData): PortfolioData => {
-  const allSections: SectionId[] = ['vsl', 'about', 'resume', 'skills', 'experience', 'projects', 'certifications', 'achievements', 'education', 'gallery'];
+  const defaultOrder: SectionId[] = ['vsl', 'about', 'skills', 'experience', 'projects', 'achievements', 'certifications', 'gallery', 'resume', 'contact'];
   const currentOrder = d.sectionOrder || [];
 
-  // For new sites or migrated sites, ensure all sections are present
+  // For new sites or migrated sites, ensure all sections are present in the correct order
   let newOrder = [...currentOrder];
 
-  // Ensure 'vsl' is specifically before 'about' if missing
-  if (!newOrder.includes('vsl')) {
-    const aboutIndex = newOrder.indexOf('about');
-    if (aboutIndex !== -1) {
-      newOrder.splice(aboutIndex, 0, 'vsl');
-    } else {
-      newOrder.unshift('vsl');
-    }
-  }
-
-  allSections.forEach(sec => {
+  // Add missing sections in their default positions
+  defaultOrder.forEach(sec => {
     if (!newOrder.includes(sec)) {
       newOrder.push(sec);
     }
   });
+
+  // Remove any sections that are not in the default list (in case of old data)
+  newOrder = newOrder.filter(sec => defaultOrder.includes(sec));
+
+  // Sort according to default order
+  newOrder.sort((a, b) => defaultOrder.indexOf(a) - defaultOrder.indexOf(b));
 
   return {
     ...INITIAL_DATA,

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PortfolioData, ThemeType, AnimationType, SectionId } from '../../types';
-import { Github, Linkedin, Instagram, ArrowRight, Sparkles, Youtube, Link, X } from 'lucide-react';
+import { Github, Linkedin, Instagram, ArrowRight, Sparkles, Youtube, Link, X, Mail, MessageCircle } from 'lucide-react';
 
 const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const isDark = data.settings.theme === ThemeType.DARK;
@@ -188,6 +188,66 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
             </div>
           </section>
         );
+      case 'contact':
+        return (
+          <section key={id} style={sStyle} className="reveal mb-40 p-10 rounded-[40px]">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] mb-12 flex items-center gap-4" style={{ color: primaryColor }}>
+               {getSectionTitle('contact', 'Contact')} <div className={`h-px flex-1 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}></div>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {data.phone && (
+                <div className="flex items-center gap-4">
+                  <Phone className="w-6 h-6" style={{ color: primaryColor }} />
+                  <span className="text-lg font-bold" style={{ color: sHeadingColor }}>{data.phone}</span>
+                </div>
+              )}
+              {data.email && (
+                <div className="flex items-center gap-4">
+                  <Mail className="w-6 h-6" style={{ color: primaryColor }} />
+                  <span className="text-lg font-bold" style={{ color: sHeadingColor }}>{data.email}</span>
+                </div>
+              )}
+              {data.address && (
+                <div className="flex items-center gap-4">
+                  <MapPin className="w-6 h-6" style={{ color: primaryColor }} />
+                  <span className="text-lg font-bold" style={{ color: sHeadingColor }}>{data.address}</span>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-6 mt-8">
+              {[
+                { id: 'linkedin', icon: Linkedin, link: data.linkedin },
+                { id: 'github', icon: Github, link: data.github },
+                { id: 'instagram', icon: Instagram, link: data.instagram },
+                { id: 'x', icon: Twitter, link: data.x },
+                { id: 'whatsapp', icon: MessageCircle, link: data.whatsapp ? `https://wa.me/${data.whatsapp.replace(/\D/g, '')}` : '' }
+              ].filter(s => s.link).map(social => (
+                <a 
+                  key={social.id} 
+                  href={social.link} 
+                  target="_blank" 
+                  className={`p-4 rounded-[20px] transition-all hover:scale-110 ${isDark ? 'bg-slate-900 text-slate-400 hover:text-white' : 'bg-slate-50 text-slate-500 hover:text-white'}`}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = primaryColor}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
+                >
+                  <social.icon className="w-6 h-6" style={social.id === 'whatsapp' ? { color: '#25D366' } : {}} />
+                </a>
+              ))}
+              {data.customLinks.map((link, i) => (
+                <a 
+                  key={i} 
+                  href={link.url} 
+                  target="_blank" 
+                  className={`p-4 rounded-[20px] transition-all hover:scale-110 ${isDark ? 'bg-slate-900 text-slate-400 hover:text-white' : 'bg-slate-50 text-slate-500 hover:text-white'}`}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = primaryColor}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
+                >
+                  <Link className="w-6 h-6" />
+                </a>
+              ))}
+            </div>
+          </section>
+        );
       default:
         return null;
     }
@@ -246,24 +306,26 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
         {data.sectionOrder.map(renderSection)}
 
         <footer className={`reveal pt-32 border-t flex flex-col md:flex-row justify-between items-center gap-12 p-12 rounded-[48px] ${isDark ? 'border-slate-800' : 'border-slate-100'}`} style={contactStyles}>
-          <div className="flex gap-6">
-            {[
-              { id: 'linkedin', icon: Linkedin, link: data.linkedin },
-              { id: 'github', icon: Github, link: data.github },
-              { id: 'instagram', icon: Instagram, link: data.instagram }
-            ].filter(s => s.link).map(social => (
-              <a 
-                key={social.id} 
-                href={social.link} 
-                target="_blank" 
-                className={`p-5 rounded-[24px] transition-all hover:scale-110 ${isDark ? 'bg-slate-900 text-slate-400 hover:text-white' : 'bg-slate-50 text-slate-500 hover:text-white'}`}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = primaryColor}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
-              >
-                <social.icon className="w-8 h-8" />
-              </a>
-            ))}
-          </div>
+          {!data.sectionOrder.includes('contact') && (
+            <div className="flex gap-6">
+              {[
+                { id: 'linkedin', icon: Linkedin, link: data.linkedin },
+                { id: 'github', icon: Github, link: data.github },
+                { id: 'instagram', icon: Instagram, link: data.instagram }
+              ].filter(s => s.link).map(social => (
+                <a 
+                  key={social.id} 
+                  href={social.link} 
+                  target="_blank" 
+                  className={`p-5 rounded-[24px] transition-all hover:scale-110 ${isDark ? 'bg-slate-900 text-slate-400 hover:text-white' : 'bg-slate-50 text-slate-500 hover:text-white'}`}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = primaryColor}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
+                >
+                  <social.icon className="w-8 h-8" />
+                </a>
+              ))}
+            </div>
+          )}
           <div className="text-center md:text-right opacity-60">
             <p className="text-2xl font-black mb-2 tracking-tighter" style={{ color: contactHeadingColor }}>{data.name}</p>
             <p className="text-[10px] font-black uppercase tracking-[0.4em]" style={{ color: primaryColor }}>© {new Date().getFullYear()} FOLIOSWIFT</p>

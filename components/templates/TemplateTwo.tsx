@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PortfolioData, SectionId, UIStyle } from '../../types';
-import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2, Youtube, Link, Star, Facebook } from 'lucide-react';
+import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2, Youtube, Link, Star, Facebook, Mail, MessageCircle } from 'lucide-react';
 
 const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const primaryColor = data.settings.primaryColor;
@@ -313,6 +313,61 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             </div>
           </div>
         );
+      case 'contact':
+        return (
+          <div key={id} id="contact" style={sStyle} className={`reveal ${span} transition-all ${vibe.card}`}>
+            <Title label={getSectionTitle('contact', 'Contact')} icon={Phone} color={sHeadingColor} />
+            <div className="flex flex-wrap gap-6 mb-12">
+              {[
+                { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' },
+                { id: 'github', icon: Github, link: data.github, color: '#171515' },
+                { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' },
+                { id: 'x', icon: Twitter, link: data.x, color: '#000' },
+                { id: 'whatsapp', icon: MessageCircle, link: data.whatsapp ? `https://wa.me/${data.whatsapp.replace(/\D/g, '')}` : '', color: '#25D366' }
+              ].filter(s => s.link).map(s => (
+                <a key={s.id} href={s.link} target="_blank" className={`w-16 h-16 flex items-center justify-center border bg-white shadow-xl transition-all hover:scale-110 hover:-rotate-2 ${uiStyle === UIStyle.GLASS ? 'rounded-[24px]' : uiStyle === UIStyle.SWISS ? 'border-[3px] border-black' : 'rounded-none border-[3px] border-black'}`}>
+                  <s.icon className="w-7 h-7" style={{ color: s.color }} />
+                </a>
+              ))}
+            </div>
+            <div className="space-y-4">
+              {data.phone && (
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 opacity-70" style={{ color: sStyle.color }} />
+                  <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-70 leading-loose" style={{ color: sStyle.color }}>{data.phone}</div>
+                </div>
+              )}
+              {data.email && (
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 opacity-70" style={{ color: sStyle.color }} />
+                  <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-70 leading-loose" style={{ color: sStyle.color }}>{data.email}</div>
+                </div>
+              )}
+              {data.address && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 opacity-70" style={{ color: sStyle.color }} />
+                  <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-70 leading-loose" style={{ color: sStyle.color }}>{data.address}</div>
+                </div>
+              )}
+            </div>
+            {data.customLinks.length > 0 && (
+              <div className="flex flex-wrap gap-4 mt-8">
+                {data.customLinks.map((link, i) => (
+                  <a 
+                    key={i} 
+                    href={link.url} 
+                    target="_blank" 
+                    className={`p-4 rounded-2xl transition-all hover:scale-110 ${vibe.card.includes('bg-slate-900') ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-50 text-slate-500 hover:text-white'}`}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = primaryColor}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
+                  >
+                    <Link className="w-6 h-6" />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        );
       default: return null;
     }
   };
@@ -384,6 +439,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             if (sec === 'certifications') return data.certifications?.length > 0;
             if (sec === 'gallery') return data.gallery?.length > 0;
             if (sec === 'education') return data.education;
+            if (sec === 'contact') return data.phone || data.email || data.address || data.whatsapp || data.linkedin || data.github || data.instagram || data.x || data.customLinks.length > 0;
             return false;
           }).slice(0, 7).map((sec) => (
             <button key={sec} onClick={() => scrollTo(sec)} className="p-2.5 rounded-full hover:bg-black/5 text-slate-500 hover:text-indigo-600 transition-all group relative">
@@ -397,6 +453,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
               {sec === 'certifications' && <Award className="w-5 h-5" />}
               {sec === 'gallery' && <Camera className="w-5 h-5" />}
               {sec === 'education' && <GraduationCap className="w-5 h-5" />}
+              {sec === 'contact' && <Phone className="w-5 h-5" />}
               <span className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{sec}</span>
             </button>
           ))}
@@ -422,22 +479,6 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
         {uiStyle === UIStyle.SWISS ? (
           <>
             {data.sectionOrder.map(renderSection)}
-            <div className="reveal md:col-span-12 transition-all p-16 border-b border-r border-black/10 rounded-none" style={contactStyles}>
-              <Title label={getSectionTitle('resume', 'Connection')} icon={Phone} color={contactHeadingColor} />
-              <div className="flex flex-wrap gap-6 mb-12">
-                {[
-                  { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' },
-                  { id: 'github', icon: Github, link: data.github, color: '#171515' },
-                  { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' },
-                  { id: 'x', icon: Twitter, link: data.x, color: '#000' }
-                ].filter(s => s.link).map(s => (
-                  <a key={s.id} href={s.link} target="_blank" className="w-16 h-16 flex items-center justify-center border-[3px] border-black bg-white shadow-xl transition-all hover:scale-110 hover:-rotate-2">
-                    <s.icon className="w-7 h-7" style={{ color: s.color }} />
-                  </a>
-                ))}
-              </div>
-              <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-30 leading-loose" style={{ color: contactStyles.color }}>{data.phone} <br /> {data.address}</div>
-            </div>
           </>
         ) : (
           data.settings.bentoView && (uiStyle === UIStyle.GLASS || uiStyle === UIStyle.NEOBRUTAL) ? (
@@ -450,44 +491,12 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
                 </div>
                 <div className="w-1/2 space-y-12">
                   {data.sectionOrder.filter(id => id !== 'about' && id !== 'vsl').filter((_, i) => i % 2 !== 0).map(id => renderSection(id))}
-                  <div className={`reveal ${vibe.card}`} style={contactStyles}>
-                    <Title label="Connection" icon={Phone} color={contactHeadingColor} />
-                    <div className="flex flex-wrap gap-6 mb-12">
-                      {[
-                        { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' },
-                        { id: 'github', icon: Github, link: data.github, color: '#171515' },
-                        { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' },
-                        { id: 'x', icon: Twitter, link: data.x, color: '#000' }
-                      ].filter(s => s.link).map(s => (
-                        <a key={s.id} href={s.link} target="_blank" className={`w-16 h-16 flex items-center justify-center border bg-white shadow-xl transition-all hover:scale-110 hover:-rotate-2 ${uiStyle === UIStyle.GLASS ? 'rounded-[24px]' : 'rounded-none border-[3px] border-black'}`}>
-                          <s.icon className="w-7 h-7" style={{ color: s.color }} />
-                        </a>
-                      ))}
-                    </div>
-                    <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-30 leading-loose" style={{ color: contactStyles.color }}>{data.phone} <br /> {data.address}</div>
-                  </div>
                 </div>
               </div>
             </>
           ) : (
             <div className={`${vibe.grid} ${data.settings.bentoView ? 'items-start' : ''}`}>
               {data.sectionOrder.map(renderSection)}
-              <div className={`reveal ${vibe.card}`} style={contactStyles}>
-                <Title label="Connection" icon={Phone} color={contactHeadingColor} />
-                <div className="flex flex-wrap gap-6 mb-12">
-                  {[
-                    { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' },
-                    { id: 'github', icon: Github, link: data.github, color: '#171515' },
-                    { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' },
-                    { id: 'x', icon: Twitter, link: data.x, color: '#000' }
-                  ].filter(s => s.link).map(s => (
-                    <a key={s.id} href={s.link} target="_blank" className={`w-16 h-16 flex items-center justify-center border bg-white shadow-xl transition-all hover:scale-110 hover:-rotate-2 ${uiStyle === UIStyle.GLASS ? 'rounded-[24px]' : 'rounded-none border-[3px] border-black'}`}>
-                      <s.icon className="w-7 h-7" style={{ color: s.color }} />
-                    </a>
-                  ))}
-                </div>
-                <div className="text-[11px] font-[1000] uppercase tracking-[0.5em] opacity-30 leading-loose" style={{ color: contactStyles.color }}>{data.phone} <br /> {data.address}</div>
-              </div>
             </div>
           )
         )}

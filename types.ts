@@ -36,7 +36,7 @@ export enum FontFamily {
   DM_SANS = 'DM Sans'
 }
 
-export type SectionId = 'vsl' | 'about' | 'skills' | 'projects' | 'gallery' | 'education' | 'experience' | 'certifications' | 'resume' | 'achievements';
+export type SectionId = 'vsl' | 'about' | 'skills' | 'projects' | 'gallery' | 'education' | 'experience' | 'certifications' | 'resume' | 'achievements' | 'contact';
 
 export interface GalleryItem {
   image: string;
@@ -106,6 +106,8 @@ export interface PortfolioData {
   skills: string;
   phone?: string;
   address?: string;
+  email?: string;
+  whatsapp?: string;
   resume?: string;
   projects: Project[];
   achievements: Achievement[];

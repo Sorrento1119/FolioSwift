@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SectionId } from '../types';
-import { ChevronUp, ChevronDown, User, Sparkles, Briefcase, GraduationCap, Image as ImageIcon, History, Award, FileText, Pencil, Youtube, Star } from 'lucide-react';
+import { ChevronUp, ChevronDown, User, Sparkles, Briefcase, GraduationCap, Image as ImageIcon, History, Award, FileText, Pencil, Youtube, Star, Phone } from 'lucide-react';
 
 interface Props {
   order: SectionId[];
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const sectionInfo: Record<SectionId, { label: string; icon: any; desc: string }> = {
-  vsl: { label: 'Video Introduction', icon: Youtube, desc: 'A personal video intro to stand out' },
+  vsl: { label: 'Video', icon: Youtube, desc: 'A personal video intro to stand out' },
   about: { label: 'Biography', icon: User, desc: 'Your personal story and manifesto' },
   resume: { label: 'Professional Resume', icon: FileText, desc: 'Direct download or link to your CV' },
   skills: { label: 'Expertise', icon: Sparkles, desc: 'Your technical toolkit and soft skills' },
@@ -18,13 +18,14 @@ const sectionInfo: Record<SectionId, { label: string; icon: any; desc: string }>
   projects: { label: 'Portfolio', icon: Briefcase, desc: 'Your best projects and works' },
   education: { label: 'Academic Path', icon: GraduationCap, desc: 'Universities and educational context' },
   gallery: { label: 'Visual Gallery', icon: ImageIcon, desc: 'Life photos and visual artifacts' },
-  certifications: { label: 'Honors & Awards', icon: Award, desc: 'Certifications, trophies, and recognition' },
-  achievements: { label: 'Key Milestones', icon: Star, desc: 'Your major accomplishments and highlights' },
+  certifications: { label: 'Certification', icon: Award, desc: 'Certifications, trophies, and recognition' },
+  achievements: { label: 'Accomplishment', icon: Star, desc: 'Your major accomplishments and highlights' },
+  contact: { label: 'Contact Info', icon: Phone, desc: 'Your contact details and social links' },
 };
 
 const PriorityEditor: React.FC<Props> = ({ order, titles, onChange }) => {
   // Ensure all sections are present in order
-  const allSections: SectionId[] = ['vsl', 'about', 'resume', 'skills', 'experience', 'projects', 'education', 'gallery', 'certifications', 'achievements'];
+  const allSections: SectionId[] = ['vsl', 'about', 'skills', 'experience', 'projects', 'achievements', 'certifications', 'gallery', 'resume', 'contact'];
   const currentOrder: SectionId[] = order.filter(id => allSections.includes(id));
 
   // Add missing sections if any
