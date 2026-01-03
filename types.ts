@@ -140,3 +140,7 @@ export interface PortfolioData {
     bentoView?: boolean;
   };
 }
+
+export interface User {
+  email: string;
+}

@@ -10,17 +10,17 @@ interface Props {
 }
 
 const sectionInfo: Record<SectionId, { label: string; icon: any; desc: string }> = {
-  vsl: { label: 'Video', icon: Youtube, desc: 'A personal video intro to stand out' },
-  about: { label: 'Biography', icon: User, desc: 'Your personal story and manifesto' },
-  resume: { label: 'Professional Resume', icon: FileText, desc: 'Direct download or link to your CV' },
-  skills: { label: 'Expertise', icon: Sparkles, desc: 'Your technical toolkit and soft skills' },
-  experience: { label: 'Experience', icon: History, desc: 'Your professional history and internships' },
-  projects: { label: 'Portfolio', icon: Briefcase, desc: 'Your best projects and works' },
-  education: { label: 'Academic Path', icon: GraduationCap, desc: 'Universities and educational context' },
-  gallery: { label: 'Visual Gallery', icon: ImageIcon, desc: 'Life photos and visual artifacts' },
-  certifications: { label: 'Certification', icon: Award, desc: 'Certifications, trophies, and recognition' },
-  achievements: { label: 'Accomplishment', icon: Star, desc: 'Your major accomplishments and highlights' },
-  contact: { label: 'Contact Info', icon: Phone, desc: 'Your contact details and social links' },
+  vsl: { label: 'Video Introduction', icon: Youtube, desc: 'A personal video intro to stand out' },
+  about: { label: 'About Me', icon: User, desc: 'Your personal story and manifesto' },
+  resume: { label: 'Resume', icon: FileText, desc: 'Direct download or link to your CV' },
+  skills: { label: 'Technical Skills', icon: Sparkles, desc: 'Your technical toolkit and soft skills' },
+  experience: { label: 'Work History', icon: History, desc: 'Your professional history and internships' },
+  projects: { label: 'Featured Projects', icon: Briefcase, desc: 'Your best projects and works' },
+  education: { label: 'Education', icon: GraduationCap, desc: 'Universities and educational context' },
+  gallery: { label: 'Photo Gallery', icon: ImageIcon, desc: 'Life photos and visual artifacts' },
+  certifications: { label: 'Certifications', icon: Award, desc: 'Certifications, trophies, and recognition' },
+  achievements: { label: 'Achievements', icon: Star, desc: 'Your major accomplishments and highlights' },
+  contact: { label: 'Get In Touch', icon: Phone, desc: 'Your contact details and social links' },
 };
 
 const PriorityEditor: React.FC<Props> = ({ order, titles, onChange }) => {

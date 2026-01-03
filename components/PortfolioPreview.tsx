@@ -217,7 +217,7 @@ const PortfolioPreview: React.FC<Props> = ({ data, onBack, isLoggedIn, userEmail
               <span className="text-[10px] font-bold text-slate-300 truncate">{window.location.host}/preview/${data.name.replace(/\s+/g, '').toLowerCase()}</span>
             </div>
           </div>
-          <div id="preview-scroll-container" className={`h-[75vh] overflow-y-auto scroll-smooth custom-scrollbar ${viewMode === 'mobile' ? 'force-mobile' : ''}`}>
+          <div id="preview-scroll-container" className={`h-[75vh] overflow-y-auto scroll-smooth custom-scrollbar ${viewMode === 'mobile' ? 'force-mobile' : viewMode === 'tablet' ? 'force-tablet' : ''}`}>
             <TemplateTwo data={data} />
           </div>
         </div>

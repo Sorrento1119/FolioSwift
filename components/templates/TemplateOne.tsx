@@ -17,11 +17,7 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        } else if (entry.boundingClientRect.top > (scrollContainer?.clientHeight || window.innerHeight)) {
-          entry.target.classList.remove('visible');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('visible');
       });
     }, {
       threshold: 0.1,
@@ -57,12 +53,27 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
     const sHeadingColor = getHeadingColor(id);
 
     switch (id) {
+      case 'vsl':
+        const videoId = data.vslUrl?.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\/|watch\?v=|&v=)([^#&?]*).*/)?.[2];
+        return data.vslUrl && videoId && (
+          <section key={id} style={sStyle} className="reveal mb-20 lg:mb-40 p-6 lg:p-10 rounded-[32px] lg:rounded-[40px]">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] mb-8 lg:mb-12" style={{ color: primaryColor }}>{getSectionTitle('vsl', 'Video Introduction')}</h2>
+            <div className="aspect-video w-full overflow-hidden rounded-[24px] lg:rounded-[40px] shadow-2xl">
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}`}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </section>
+        );
       case 'about':
         return (
           <section key={id} style={sStyle} className="reveal grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 mb-20 lg:mb-40 p-6 lg:p-10 rounded-[32px] lg:rounded-[40px]">
             <div className="lg:col-span-12">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] mb-6 lg:mb-8" style={{ color: primaryColor }}>{getSectionTitle('about', 'About')}</h2>
-              <p className={`text-xl lg:text-4xl leading-tight font-black tracking-tighter break-words`} style={{ color: sHeadingColor }}>{data.bio}</p>
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] mb-6 lg:mb-8" style={{ color: primaryColor }}>{getSectionTitle('about', 'About Me')}</h2>
+              <p className={`text-base lg:text-4xl leading-tight font-black tracking-tighter break-words`} style={{ color: sHeadingColor }}>{data.bio}</p>
             </div>
           </section>
         );
@@ -313,10 +324,28 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
         }
 
         /* Scaling for Template One mobile preview */
-        .force-mobile .text-9xl { font-size: 3.5rem !important; line-height: 1 !important; }
-        .force-mobile .text-7xl { font-size: 2.25rem !important; line-height: 1.1 !important; }
-        .force-mobile .text-4xl { font-size: 1.5rem !important; line-height: 1.2 !important; }
-        .force-mobile p.text-4xl { font-size: 1.25rem !important; }
+        .force-mobile .lg\\:text-9xl, .force-mobile .text-9xl { font-size: 2.25rem !important; line-height: 1 !important; }
+        .force-mobile .lg\\:text-7xl, .force-mobile .text-7xl { font-size: 1.75rem !important; line-height: 1.1 !important; }
+        .force-mobile .lg\\:text-4xl, .force-mobile .text-4xl { font-size: 1.25rem !important; line-height: 1.2 !important; }
+        .force-mobile p.text-4xl, .force-mobile .lg\\:text-4xl { font-size: 1.15rem !important; }
+        
+        .force-mobile .lg\\:p-12, .force-mobile .lg\\:p-10 { padding: 1.25rem !important; }
+        .force-mobile h1, .force-mobile p { 
+          overflow-wrap: break-word !important; 
+          word-break: normal !important;
+          hyphens: none !important;
+        }
+
+        /* Scaling for Template One tablet preview */
+        .force-tablet .lg\\:text-9xl, .force-tablet .text-9xl { font-size: 4rem !important; line-height: 1 !important; }
+        .force-tablet .lg\\:text-7xl, .force-tablet .text-7xl { font-size: 3rem !important; line-height: 1.1 !important; }
+        .force-tablet .lg\\:text-4xl, .force-tablet .text-4xl { font-size: 2rem !important; line-height: 1.2 !important; }
+        .force-tablet .lg\\:p-12, .force-tablet .lg\\:p-10 { padding: 3rem !important; }
+        .force-tablet h1, .force-tablet p { 
+          overflow-wrap: break-word !important; 
+          word-break: normal !important;
+          hyphens: none !important;
+        }
       `}</style>
 
       <div className="relative z-10 max-w-5xl mx-auto py-16 lg:py-32 px-6 lg:px-12">
@@ -327,7 +356,7 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
               <img src={data.photo} className="relative w-40 h-40 lg:w-56 lg:h-56 rounded-full mx-auto object-cover ring-[12px] lg:ring-[20px] ring-black/5 border-4 border-white shadow-2xl" />
             </div>
           )}
-          <h1 className="text-4xl lg:text-9xl font-black tracking-tighter mb-4 lg:mb-8 leading-[1] lg:leading-[0.8] break-words" style={{ color: headerHeadingColor }}>{data.name}</h1>
+          <h1 className="text-2xl lg:text-9xl font-black tracking-tighter mb-4 lg:mb-8 leading-[1] lg:leading-[0.8] break-words" style={{ color: headerHeadingColor }}>{data.name}</h1>
           <p className="text-base lg:text-2xl font-black tracking-tight opacity-60 max-w-2xl mx-auto uppercase tracking-widest leading-relaxed">{data.education}</p>
         </header>
 

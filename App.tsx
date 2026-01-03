@@ -1,6 +1,6 @@
 import { supabase } from './utils/supabase';
 import React, { useState, useEffect } from 'react';
-import { PortfolioData, AnimationType, ThemeType, SectionId, UIStyle, FontFamily } from './types';
+import { PortfolioData, AnimationType, ThemeType, SectionId, UIStyle, FontFamily, User } from './types';
 import PortfolioForm from './components/PortfolioForm';
 import PriorityEditor from './components/PriorityEditor';
 import AnimationEditor from './components/AnimationEditor';
@@ -31,7 +31,19 @@ const INITIAL_DATA: PortfolioData = {
   github: '',
   instagram: '',
   sectionOrder: ['vsl', 'about', 'skills', 'experience', 'projects', 'achievements', 'certifications', 'gallery', 'resume', 'contact'],
-  sectionTitles: {},
+  sectionTitles: {
+    vsl: 'Video Introduction',
+    about: 'About Me',
+    skills: 'Technical Skills',
+    projects: 'Featured Projects',
+    gallery: 'Photo Gallery',
+    education: 'Education',
+    experience: 'Work History',
+    certifications: 'Certifications',
+    resume: 'Resume',
+    achievements: 'Achievements',
+    contact: 'Get In Touch'
+  },
   navbarEnabled: true,
   settings: {
     animation: AnimationType.SLIDE_UP,
@@ -74,6 +86,7 @@ const ensureCompleteData = (d: PortfolioData): PortfolioData => {
   return {
     ...INITIAL_DATA,
     ...d,
+    sectionTitles: { ...INITIAL_DATA.sectionTitles, ...d.sectionTitles },
     sectionOrder: newOrder as SectionId[]
   };
 };
@@ -91,29 +104,31 @@ const steps: { id: Step; label: string }[] = [
 
 const LoadingScreen: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center">
-      <div className="text-center space-y-8">
-        {/* Simple loading spinner */}
-        <div className="flex justify-center">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-indigo-400 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <h2 className="text-2xl font-black text-slate-900">Loading Portfolio</h2>
-        </div>
-        
-        {/* Loading dots */}
-        <div className="flex justify-center">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-indigo-600 rounded-full animate-pulse"></div>
-            <div className="w-3 h-3 bg-indigo-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-3 h-3 bg-indigo-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+      <div className="relative group">
+        <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-3xl animate-pulse scale-150"></div>
+        <div className="relative bg-white p-8 rounded-[40px] shadow-2xl border border-indigo-50 flex items-center justify-center">
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-10 bg-indigo-600 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-1.1s]"></div>
+            <div className="w-2 h-16 bg-indigo-500 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-1.0s]"></div>
+            <div className="w-2 h-12 bg-indigo-400 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-0.9s]"></div>
           </div>
         </div>
       </div>
+      <div className="mt-12 text-center">
+        <h2 className="text-xl font-black text-slate-900 tracking-tighter uppercase mb-1">Building Your Story</h2>
+        <div className="flex items-center justify-center gap-1">
+          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce"></div>
+        </div>
+      </div>
+      <style>{`
+        @keyframes wavy {
+          0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+          50% { transform: scaleY(1.5); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 };
@@ -349,7 +364,6 @@ const App: React.FC = () => {
   );
 
   if (view === 'dashboard' && user) {
-    //const userSites = storage.getUserSites(user.email);
     return (
       <div className="min-h-screen bg-slate-50">
         <header className="bg-white border-b h-20 flex items-center justify-between px-8">
@@ -379,7 +393,17 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {userSites.length === 0 ? (
+            {isLoadingSites ? (
+              <div className="col-span-1 md:col-span-2 py-20 flex flex-col items-center justify-center bg-white rounded-[40px] border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div className="absolute inset-0 bg-indigo-50/30 animate-pulse"></div>
+                <div className="relative flex items-center gap-1.5 mb-8">
+                  <div className="w-2 h-8 bg-indigo-600 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-1.1s]"></div>
+                  <div className="w-2 h-12 bg-indigo-500 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-1.0s]"></div>
+                  <div className="w-2 h-10 bg-indigo-400 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-0.9s]"></div>
+                </div>
+                <p className="relative text-sm font-black text-indigo-600 uppercase tracking-[0.2em] animate-pulse">Syncing Projects...</p>
+              </div>
+            ) : userSites.length === 0 ? (
               <div className="col-span-2 py-20 bg-white rounded-[32px] border-2 border-dashed border-slate-200 flex flex-col items-center">
                 <p className="text-slate-400 font-bold mb-4">You haven't published any sites yet.</p>
                 <button onClick={() => { setData(INITIAL_DATA); setCurrentSlug(null); setView('builder'); setStep('details'); }} className="text-indigo-600 font-black flex items-center gap-2">Build your first one <ArrowRight className="w-4 h-4" /></button>

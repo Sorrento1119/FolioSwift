@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PortfolioData, SectionId, UIStyle } from '../../types';
-import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2, Youtube, Link, Star, Facebook, Mail, MessageCircle } from 'lucide-react';
+import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles, User, History, Phone, MapPin, ExternalLink, Twitter, Award, FileText, X, Maximize2, Youtube, Link, Star, Facebook, Mail, MessageCircle, ArrowRight } from 'lucide-react';
 
 const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const primaryColor = data.settings.primaryColor;
@@ -12,6 +12,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const softSkillsList = data.softSkills.split(',').map(s => s.trim()).filter(Boolean);
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const scrollContainer = document.getElementById('preview-scroll-container');
@@ -149,8 +150,8 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
       case 'about':
         return (
           <div key={id} id="about" style={sStyle} className={`reveal ${span} transition-all ${vibe.card}`}>
-            <Title label={getSectionTitle('about', 'Biography')} icon={User} color={sHeadingColor} />
-            <p className={`break-words ${uiStyle === UIStyle.MINIMAL ? 'text-xl sm:text-4xl lg:text-7xl leading-tight' : uiStyle === UIStyle.EDITORIAL ? 'serif text-2xl sm:text-4xl lg:text-6xl leading-tight italic font-light' : 'text-lg sm:text-2xl lg:text-4xl font-black'} tracking-tighter`} style={{ color: sHeadingColor, fontFamily: data.settings.headingFont }}>{data.bio}</p>
+            <Title label={getSectionTitle('about', 'About Me')} icon={User} color={sHeadingColor} />
+            <p className={`break-words ${uiStyle === UIStyle.MINIMAL ? 'text-lg sm:text-4xl lg:text-7xl leading-tight' : uiStyle === UIStyle.EDITORIAL ? 'serif text-xl sm:text-4xl lg:text-6xl leading-tight italic font-light' : 'text-base sm:text-2xl lg:text-4xl font-black'} tracking-tighter`} style={{ color: sHeadingColor, fontFamily: data.settings.headingFont }}>{data.bio}</p>
           </div>
         );
       case 'resume':
@@ -164,7 +165,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
       case 'skills':
         return (
           <div key={id} id="skills" style={sStyle} className={`reveal ${span} transition-all ${vibe.card}`}>
-            <Title label={getSectionTitle('skills', 'Toolbox')} icon={Sparkles} color={sHeadingColor} />
+            <Title label={getSectionTitle('skills', 'Technical Skills')} icon={Sparkles} color={sHeadingColor} />
             {skillsList.length > 0 && (
               <div className="mb-6 lg:mb-8">
                 <h4 className="text-[10px] lg:text-sm font-black uppercase tracking-widest text-slate-400 mb-3 lg:mb-4">Technical Skills</h4>
@@ -392,7 +393,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const headerHeadingColor = getHeadingColor('header');
 
   return (
-    <div ref={containerRef} className="min-h-full transition-colors duration-700 relative overflow-y-auto overflow-x-hidden" style={{ backgroundColor: bgColor, fontFamily: data.settings.bodyFont }}>
+    <div ref={containerRef} className="min-h-full transition-colors duration-700 relative" style={{ backgroundColor: bgColor, fontFamily: data.settings.bodyFont }}>
 
       {/* Lightbox / Full Image Viewer */}
       {selectedImage && (
@@ -441,76 +442,203 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
           .no-scrollbar::-webkit-scrollbar { display: none; }
           .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+          /* New Mobile Nav Base Styles */
+          .mobile-nav-top, .mobile-nav-bottom { display: none; }
+
+          @media (max-width: 1024px) {
+            .desktop-nav { display: none !important; }
+            .mobile-nav-top { 
+              display: flex !important;
+              position: sticky !important;
+              top: 0;
+              z-index: 150;
+            }
+            .mobile-nav-bottom {
+              display: flex !important;
+              position: fixed !important;
+              bottom: 1.5rem;
+              left: 50%;
+              transform: translateX(-50%);
+              z-index: 150;
+              width: max-content;
+              min-width: 280px;
+            }
+          }
+
           /* Force Mobile Styles for Preview Mode */
-          .force-mobile .grid, 
-          .force-mobile .lg\\:grid-cols-12, 
-          .force-mobile .lg\\:grid-cols-2 {
+          .force-mobile .grid, .force-mobile .lg\\:grid-cols-12, .force-mobile .lg\\:grid-cols-2 {
             grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
           }
-          .force-mobile .lg\\:col-span-12, 
-          .force-mobile .lg\\:col-span-4, 
-          .force-mobile .lg\\:col-span-2 {
+          .force-mobile .lg\\:col-span-12, .force-mobile .lg\\:col-span-4, .force-mobile .lg\\:col-span-2 {
             grid-column: span 1 / span 1 !important;
           }
-          .force-mobile .flex-row,
-          .force-mobile .lg\\:flex-row {
+          .force-mobile .flex-row, .force-mobile .lg\\:flex-row {
             flex-direction: column !important;
           }
-          .force-mobile .lg\\:w-1\\/2 {
-            width: 100% !important;
-          }
+          .force-mobile .lg\\:w-1\\/2 { width: 100% !important; }
 
-          /* Bio/Intro scaling for mobile */
-          @media (max-width: 768px) {
-            .force-mobile .text-9xl { font-size: 3.5rem !important; }
-            .force-mobile .text-7xl { font-size: 2.5rem !important; }
-            .force-mobile .text-4xl { font-size: 1.75rem !important; }
-            .force-mobile .text-3xl { font-size: 1.5rem !important; }
+          .force-mobile .lg\\:text-9xl, .force-mobile .text-9xl { font-size: 2rem !important; line-height: 1 !important; }
+          .force-mobile .lg\\:text-7xl, .force-mobile .text-7xl { font-size: 1.5rem !important; line-height: 1.1 !important; }
+          .force-mobile .lg\\:text-6xl, .force-mobile .text-6xl { font-size: 1.35rem !important; line-height: 1.1 !important; }
+          .force-mobile .lg\\:text-4xl, .force-mobile .text-4xl { font-size: 1.25rem !important; line-height: 1.2 !important; }
+          .force-mobile .lg\\:text-3xl, .force-mobile .text-3xl { font-size: 1.1rem !important; }
+          
+          .force-mobile .lg\\:p-24, .force-mobile .lg\\:p-20, .force-mobile .lg\\:p-16, .force-mobile .lg\\:p-12 { padding: 1.25rem !important; }
+          
+          .force-mobile h1, .force-mobile p { 
+            overflow-wrap: break-word !important; 
+            word-break: normal !important; 
+            hyphens: none !important;
+            text-align: left !important;
           }
-           .force-mobile .text-9xl { font-size: 3.5rem !important; line-height: 1 !important; }
-           .force-mobile .text-7xl { font-size: 2.25rem !important; line-height: 1.1 !important; }
-           .force-mobile .text-6xl { font-size: 2rem !important; line-height: 1.1 !important; }
-           .force-mobile .text-4xl { font-size: 1.75rem !important; line-height: 1.2 !important; }
-           .force-mobile .lg\\:p-24 { padding: 1.5rem !important; }
-           .force-mobile .lg\\:p-20 { padding: 1.25rem !important; }
-           .force-mobile .lg\\:p-16 { padding: 1rem !important; }
-           .force-mobile .lg\\:p-12 { padding: 1rem !important; }
+          
+          .force-mobile .desktop-nav { display: none !important; }
+          .force-mobile .mobile-nav-top { 
+            display: flex !important; 
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            z-index: 150;
+          }
+          .force-mobile .mobile-nav-bottom { 
+            display: flex !important;
+            position: sticky !important;
+            bottom: 1.5rem !important;
+            margin-top: -5rem !important;
+            left: 0 !important;
+            right: 0 !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            transform: none !important;
+            z-index: 150;
+            width: 85% !important;
+            max-width: 320px !important;
+            min-width: unset !important;
+            justify-content: center !important;
+          }
+          .force-mobile .mobile-menu-overlay { position: absolute !important; }
+
+          /* Force Tablet Styles for Preview Mode */
+          .force-tablet .lg\\:text-9xl, .force-tablet .text-9xl { font-size: 4rem !important; line-height: 1 !important; }
+          .force-tablet .lg\\:text-7xl, .force-tablet .text-7xl { font-size: 3rem !important; line-height: 1.1 !important; }
+          .force-tablet .lg\\:text-6xl, .force-tablet .text-6xl { font-size: 2.5rem !important; line-height: 1.1 !important; }
+          .force-tablet .lg\\:text-4xl, .force-tablet .text-4xl { font-size: 2rem !important; line-height: 1.2 !important; }
+          .force-tablet .lg\\:p-24, .force-tablet .lg\\:p-20, .force-tablet .lg\\:p-16 { padding: 3rem !important; }
+          .force-tablet h1, .force-tablet p { 
+            overflow-wrap: break-word !important; 
+            word-break: normal !important; 
+            hyphens: none !important;
+          }
+          
+          /* Better Nav Hover Styles */
+          .mobile-nav-bottom button .nav-label {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-size: 0;
+          }
+          @media (hover: hover) {
+            .mobile-nav-bottom button:hover .nav-label {
+              opacity: 1;
+              height: auto;
+              margin-top: 4px;
+              font-size: 10px;
+            }
+          }
         `}</style>
 
-      {/* STICKY NAVBAR FIXED WITHIN SCROLLABLE CONTAINER */}
       {data.navbarEnabled && (
-        <nav className="sticky top-2 lg:top-8 mx-auto z-[100] w-[95%] lg:w-max px-3 lg:px-8 py-2.5 lg:py-4 bg-white/90 backdrop-blur-3xl border border-slate-200 rounded-2xl lg:rounded-full shadow-2xl flex items-center justify-center gap-1 lg:gap-6 mb-6 lg:mb-12 animate-in fade-in slide-in-from-top-4 duration-700 overflow-x-auto no-scrollbar">
-          {data.sectionOrder.filter(sec => {
-            if (sec === 'vsl') return data.vslUrl;
-            if (sec === 'about') return data.bio;
-            if (sec === 'resume') return data.resume;
-            if (sec === 'experience') return data.experiences?.length > 0;
-            if (sec === 'projects') return data.projects?.length > 0;
-            if (sec === 'skills') return data.skills?.split(',').filter(s => s.trim()).length > 0;
-            if (sec === 'achievements') return data.achievements?.length > 0;
-            if (sec === 'certifications') return data.certifications?.length > 0;
-            if (sec === 'gallery') return data.gallery?.length > 0;
-            if (sec === 'education') return data.education;
-            if (sec === 'contact') return data.phone || data.email || data.address || data.whatsapp || data.linkedin || data.github || data.instagram || data.x || data.customLinks.length > 0;
-            return false;
-          }).slice(0, 9).map((sec) => (
-            <button key={sec} onClick={() => scrollTo(sec)} className="p-2 lg:p-2.5 rounded-full hover:bg-black/5 text-slate-500 hover:text-indigo-600 transition-all group relative flex-shrink-0">
-              {sec === 'vsl' && <Youtube className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'about' && <User className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'resume' && <FileText className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'experience' && <History className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'projects' && <Briefcase className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'skills' && <Sparkles className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'achievements' && <Star className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'certifications' && <Award className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'gallery' && <Camera className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'education' && <GraduationCap className="w-4 h-4 lg:w-5 lg:h-5" />}
-              {sec === 'contact' && <Phone className="w-4 h-4 lg:w-5 lg:h-5" />}
-              <span className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{sec}</span>
+        <>
+          {/* DESKTOP NAVBAR */}
+          <nav className="desktop-nav sticky top-8 mx-auto z-[100] w-max px-8 py-4 bg-white/90 backdrop-blur-3xl border border-slate-200 rounded-full shadow-2xl flex items-center justify-center gap-6 mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+            {data.sectionOrder.filter(sec => {
+              if (sec === 'vsl') return data.vslUrl;
+              if (sec === 'about') return data.bio;
+              if (sec === 'resume') return data.resume;
+              if (sec === 'experience') return data.experiences?.length > 0;
+              if (sec === 'projects') return data.projects?.length > 0;
+              if (sec === 'skills') return data.skills?.split(',').filter(s => s.trim()).length > 0;
+              if (sec === 'achievements') return data.achievements?.length > 0;
+              if (sec === 'certifications') return data.certifications?.length > 0;
+              if (sec === 'gallery') return data.gallery?.length > 0;
+              if (sec === 'education') return data.education;
+              if (sec === 'contact') return data.phone || data.email || data.address || data.whatsapp || data.linkedin || data.github || data.instagram || data.x || data.customLinks.length > 0;
+              return false;
+            }).slice(0, 9).map((sec) => (
+              <button key={sec} onClick={() => scrollTo(sec)} className="p-2.5 rounded-full hover:bg-black/5 text-slate-500 hover:text-indigo-600 transition-all group relative">
+                {sec === 'vsl' && <Youtube className="w-5 h-5" />}
+                {sec === 'about' && <User className="w-5 h-5" />}
+                {sec === 'resume' && <FileText className="w-5 h-5" />}
+                {sec === 'experience' && <History className="w-5 h-5" />}
+                {sec === 'projects' && <Briefcase className="w-5 h-5" />}
+                {sec === 'skills' && <Sparkles className="w-5 h-5" />}
+                {sec === 'achievements' && <Star className="w-5 h-5" />}
+                {sec === 'certifications' && <Award className="w-5 h-5" />}
+                {sec === 'gallery' && <Camera className="w-5 h-5" />}
+                {sec === 'education' && <GraduationCap className="w-5 h-5" />}
+                {sec === 'contact' && <Phone className="w-5 h-5" />}
+                <span className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{getSectionTitle(sec as SectionId, sec)}</span>
+              </button>
+            ))}
+            {data.photo && <img src={data.photo} className="w-10 h-10 rounded-full border-2 border-slate-50 shadow-md object-cover flex-shrink-0" />}
+          </nav>
+
+          {/* MOBILE TOP HEADER */}
+          <div className="mobile-nav-top w-full px-6 py-4 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm animate-in slide-in-from-top duration-500">
+            <div className="flex items-center gap-3">
+              {data.photo && <img src={data.photo} className="w-10 h-10 rounded-full object-cover border-2 border-indigo-100" />}
+              <span className="font-bold text-sm tracking-tighter truncate max-w-[150px]">{data.name}</span>
+            </div>
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 active:scale-90 transition-transform"
+            >
+              <div className="flex flex-col gap-1.5 items-end">
+                <div className="w-6 h-0.5 bg-current rounded-full" />
+                <div className="w-4 h-0.5 bg-current rounded-full" />
+                <div className="w-5 h-0.5 bg-current rounded-full" />
+              </div>
             </button>
-          ))}
-          {data.photo && <img src={data.photo} className="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-slate-50 shadow-md object-cover flex-shrink-0 ml-2" />}
-        </nav>
+          </div>
+
+
+          {/* MOBILE FULL SCREEN MENU */}
+          {isMobileMenuOpen && (
+            <div className="mobile-menu-overlay fixed inset-0 z-[200] bg-white/95 backdrop-blur-2xl p-8 flex flex-col animate-in fade-in zoom-in-95 duration-300">
+              <div className="flex justify-between items-center mb-16">
+                <span className="text-2xl font-black tracking-tighter uppercase" style={{ color: primaryColor }}>{data.name || 'Navigation'}</span>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-900"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-6 overflow-y-auto pb-20 no-scrollbar">
+                {data.sectionOrder.map((id) => {
+                  const label = getSectionTitle(id, id === 'vsl' ? 'Video Introduction' : id);
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => {
+                        scrollTo(id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="text-left py-4 border-b border-slate-100 group flex items-center justify-between"
+                    >
+                      <span className="text-4xl font-black tracking-tighter opacity-90 group-hover:translate-x-4 transition-transform group-hover:text-indigo-600 uppercase">{label}</span>
+                      <ArrowRight className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <div className={`${uiStyle === UIStyle.SWISS ? 'max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-0 border-t border-l border-black/10' : vibe.container}`}>
@@ -522,7 +650,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
           )}
           <div className="flex-grow w-full overflow-hidden">
             {data.badgeText && <div className={vibe.badge}>{data.badgeText}</div>}
-            <h1 className="text-3xl sm:text-6xl lg:text-9xl font-[1000] tracking-[-0.07em] mb-4 leading-[0.9] lg:leading-none break-words" style={{ color: headerHeadingColor, fontFamily: data.settings.headingFont }}>{data.name || 'Site Identity'}</h1>
+            <h1 className="text-2xl sm:text-6xl lg:text-9xl font-[1000] tracking-[-0.07em] mb-4 leading-[0.9] lg:leading-none break-words" style={{ color: headerHeadingColor, fontFamily: data.settings.headingFont }}>{data.name || 'Site Identity'}</h1>
             {data.subheading && <p className="text-base sm:text-xl lg:text-3xl font-black opacity-40 leading-tight" style={{ color: headerStyles.color }}>{data.subheading}</p>}
           </div>
         </header>
@@ -556,6 +684,57 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
         <footer className={`reveal py-16 lg:py-40 text-center opacity-20 ${uiStyle === UIStyle.SWISS ? 'lg:col-span-12 border-r border-b border-black/10' : ''}`} style={{ color: globalBodyTextColor }}>
           <p className="text-[8px] lg:text-[11px] font-black uppercase tracking-[0.6em]">Powered by FolioSwift • 2025</p>
         </footer>
+        {data.navbarEnabled && (
+          <div className="mobile-nav-bottom p-2 bg-white/90 backdrop-blur-3xl border border-slate-200 rounded-[28px] shadow-[0_20px_40px_rgba(0,0,0,0.15)] flex items-center gap-2 animate-in slide-in-from-bottom-8 duration-700">
+            {/* 1. Video (if available, else About) */}
+            {data.vslUrl ? (
+              <button
+                onClick={() => scrollTo('vsl')}
+                className={`group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl transition-all active:scale-95 ${uiStyle === UIStyle.GLASS ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50'}`}
+              >
+                <Youtube className="w-5 h-5" />
+                <span className="nav-label font-black uppercase tracking-tight truncate max-w-[80px] text-center">{getSectionTitle('vsl', 'Video Introduction')}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => scrollTo('about')}
+                className="group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 transition-all active:scale-95"
+              >
+                <User className="w-5 h-5" />
+                <span className="nav-label font-black uppercase tracking-tight truncate max-w-[80px] text-center">{getSectionTitle('about', 'About Me')}</span>
+              </button>
+            )}
+
+            {/* 2. Projects > Experience > Awards > Certifications (Priority Pick) */}
+            {(() => {
+              let config = { id: 'projects', icon: Briefcase, label: getSectionTitle('projects', 'Projects') };
+              if (data.projects?.length > 0) config = { id: 'projects', icon: Briefcase, label: getSectionTitle('projects', 'Projects') };
+              else if (data.experiences?.length > 0) config = { id: 'experience', icon: History, label: getSectionTitle('experience', 'Experience') };
+              else if (data.achievements?.length > 0) config = { id: 'achievements', icon: Star, label: getSectionTitle('achievements', 'Achievements') };
+              else if (data.certifications?.length > 0) config = { id: 'certifications', icon: Award, label: getSectionTitle('certifications', 'Certifications') };
+
+              const Icon = config.icon;
+              return (
+                <button
+                  onClick={() => scrollTo(config.id as SectionId)}
+                  className="group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 transition-all active:scale-95"
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="nav-label font-black uppercase tracking-tight truncate max-w-[80px] text-center">{config.label}</span>
+                </button>
+              );
+            })()}
+
+            {/* 3. Contact */}
+            <button
+              onClick={() => scrollTo('contact')}
+              className="group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-900 text-white transition-all active:scale-95"
+            >
+              <Phone className="w-5 h-5" />
+              <span className="nav-label font-black uppercase tracking-tight truncate max-w-[80px] text-center">{getSectionTitle('contact', 'Contact')}</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
