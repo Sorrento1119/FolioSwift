@@ -253,6 +253,16 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (view === 'public' && publicData) {
+      document.title = `${publicData.name}${publicData.subheading ? ` | ${publicData.subheading}` : ''}`;
+    } else if (view === 'builder' && step === 'preview') {
+      document.title = `${data.name}${data.subheading ? ` | ${data.subheading}` : ''}`;
+    } else {
+      document.title = 'FolioSwift | Professional Student Portfolios';
+    }
+  }, [view, step, data.name, data.subheading, publicData]);
+
+  useEffect(() => {
     if (user && view === 'dashboard') {
       setIsLoadingSites(true);
       storage.getUserSites(user.email).then(sites => {
@@ -301,20 +311,20 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-white flex flex-col font-['Plus_Jakarta_Sans']">
       <AuthModal isOpen={isAuthOpen} initialMode={authMode} onClose={() => setIsAuthOpen(false)} onAuth={handleAuth} />
 
-      <header className="px-8 md:px-12 h-24 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="bg-[#6366f1] p-2 rounded-lg">
-            <Sparkles className="text-white w-5 h-5" />
+      <header className="h-20 md:h-24 px-4 md:px-12 flex items-center justify-between border-b border-slate-50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+          <div className="w-8 h-8 md:w-10 md:h-10 bg-[#6366f1] rounded-[10px] md:rounded-[14px] flex items-center justify-center rotate-3 shadow-lg shadow-indigo-200">
+            <Sparkles className="text-white w-4 h-4 md:w-6 md:h-6" />
           </div>
-          <span className="text-xl font-black tracking-tighter text-slate-900">FolioSwift</span>
+          <span className="text-lg md:text-xl font-black tracking-tighter text-slate-900 whitespace-nowrap">FolioSwift</span>
         </div>
-        <div className="flex items-center gap-6">
-          <a href="https://github.com/Sorrento1119/FolioSwift" target="_blank" className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-900 transition-all font-bold text-xs">
+        <div className="flex items-center gap-3 md:gap-6">
+          <a href="https://github.com/Sorrento1119/FolioSwift" target="_blank" className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-900 transition-all font-bold text-xs">
             <Github className="w-4 h-4" />
-            <span>GitHub</span>
+            <span className="hidden sm:inline">GitHub</span>
           </a>
-          <button onClick={() => openAuth('login')} className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Login</button>
-          <button onClick={() => openAuth('signup')} className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">Get Started</button>
+          <button onClick={() => openAuth('login')} className="text-xs md:text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors whitespace-nowrap">Login</button>
+          <button onClick={() => openAuth('signup')} className="hidden md:block bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all whitespace-nowrap">Get Started</button>
         </div>
       </header>
 
