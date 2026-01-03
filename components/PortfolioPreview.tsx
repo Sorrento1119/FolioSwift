@@ -21,6 +21,16 @@ const PublishModal: React.FC<{ isOpen: boolean, onClose: () => void, data: Portf
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
 
+  // Sync state when modal opens or initialSlug changes
+  React.useEffect(() => {
+    if (isOpen) {
+      setSlug(initialSlug || data.name.replace(/\s+/g, '').toLowerCase() || 'mysite');
+      setError('');
+      setIsSuccess(false);
+      setIsPublishing(false);
+    }
+  }, [isOpen, initialSlug, data.name]);
+
   if (!isOpen) return null;
 
   const currentHost = window.location.host;
@@ -128,15 +138,16 @@ const PortfolioPreview: React.FC<Props> = ({ data, onBack, isLoggedIn, userEmail
     // Use existing slug or generate one based on name + timestamp to avoid collision
     const slug = initialSlug || `${data.name.replace(/\s+/g, '').toLowerCase()}-${Date.now().toString().slice(-4)}`;
 
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
-        storage.saveSite(slug, data, userEmail, initialSlug);
+        await storage.saveSite(slug, data, userEmail, initialSlug);
         setIsSaving(false);
         setShowSaveSuccess(true);
+        onSlugChange?.(slug);
         setTimeout(() => setShowSaveSuccess(false), 3000);
-      } catch (e) {
+      } catch (e: any) {
         setIsSaving(false);
-        alert('Could not save draft. Try picking a unique name.');
+        alert(e.message || 'Could not save draft. Try picking a unique name.');
       }
     }, 1000);
   };
