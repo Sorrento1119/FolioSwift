@@ -6,6 +6,7 @@ import { ChevronUp, ChevronDown, User, Sparkles, Briefcase, GraduationCap, Image
 interface Props {
   order: SectionId[];
   titles: Partial<Record<SectionId, string>>;
+  data: any; // Can be PortfolioData
   onChange: (newOrder: SectionId[], newTitles: Partial<Record<SectionId, string>>) => void;
 }
 
@@ -23,14 +24,30 @@ const sectionInfo: Record<SectionId, { label: string; icon: any; desc: string }>
   contact: { label: 'Get In Touch', icon: Phone, desc: 'Your contact details and social links' },
 };
 
-const PriorityEditor: React.FC<Props> = ({ order, titles, onChange }) => {
-  // Ensure all sections are present in order
-  const allSections: SectionId[] = ['vsl', 'about', 'skills', 'experience', 'projects', 'achievements', 'certifications', 'gallery', 'resume', 'contact'];
-  const currentOrder: SectionId[] = order.filter(id => allSections.includes(id));
+const PriorityEditor: React.FC<Props> = ({ order, titles, data, onChange }) => {
+  const isFilled = (id: SectionId) => {
+    switch (id) {
+      case 'vsl': return !!data.vslUrl;
+      case 'about': return !!data.bio;
+      case 'resume': return !!data.resume;
+      case 'skills': return !!data.skills || !!data.softSkills;
+      case 'experience': return data.experiences?.length > 0;
+      case 'projects': return data.projects?.length > 0;
+      case 'education': return !!data.education;
+      case 'gallery': return data.gallery?.length > 0;
+      case 'certifications': return data.certifications?.length > 0;
+      case 'achievements': return data.achievements?.length > 0;
+      case 'contact': return !!(data.email || data.phone || data.linkedin || data.github || data.instagram);
+      default: return true;
+    }
+  };
 
-  // Add missing sections if any
+  const allSections: SectionId[] = ['vsl', 'about', 'skills', 'experience', 'projects', 'achievements', 'certifications', 'gallery', 'resume', 'contact'];
+  const currentOrder: SectionId[] = order.filter(id => allSections.includes(id) && isFilled(id));
+
+  // Add missing filled sections
   allSections.forEach(id => {
-    if (!currentOrder.includes(id)) currentOrder.push(id);
+    if (isFilled(id) && !currentOrder.includes(id)) currentOrder.push(id);
   });
 
   const move = (index: number, direction: 'up' | 'down') => {

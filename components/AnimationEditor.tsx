@@ -52,14 +52,14 @@ const AnimationEditor: React.FC<Props> = ({ settings, navbarEnabled, onNavbarCha
   const [showAdvanced, setShowAdvanced] = useState(false);
   const update = (key: string, value: any) => onChange({ ...settings, [key]: value });
 
-  const applyPreset = (preset: typeof LIGHT_PRESETS[0]) => {
+  const applyPreset = (preset: typeof LIGHT_PRESETS[0], isDark: boolean) => {
     onChange({
       ...settings,
       backgroundColor: preset.bg,
       textColor: preset.text,
       headingColor: preset.heading,
       primaryColor: preset.primary,
-      theme: ThemeType.CUSTOM,
+      theme: isDark ? ThemeType.DARK : ThemeType.LIGHT,
       sectionColors: {}
     });
   };
@@ -100,7 +100,7 @@ const AnimationEditor: React.FC<Props> = ({ settings, navbarEnabled, onNavbarCha
               <div className="flex flex-wrap gap-3">
                 {LIGHT_PRESETS.map((p) => (
                   <button
-                    key={p.name} onClick={() => applyPreset(p)}
+                    key={p.name} onClick={() => applyPreset(p, false)}
                     className="w-12 h-12 rounded-2xl border-2 border-slate-100 hover:border-indigo-600 transition-all overflow-hidden p-1 bg-white shadow-sm"
                   >
                     <div className="w-full h-full rounded-xl flex" title={p.name}>
@@ -116,7 +116,7 @@ const AnimationEditor: React.FC<Props> = ({ settings, navbarEnabled, onNavbarCha
               <div className="flex flex-wrap gap-3">
                 {DARK_PRESETS.map((p) => (
                   <button
-                    key={p.name} onClick={() => applyPreset(p)}
+                    key={p.name} onClick={() => applyPreset(p, true)}
                     className="w-12 h-12 rounded-2xl border-2 border-slate-100 hover:border-indigo-600 transition-all overflow-hidden p-1 bg-white shadow-sm"
                   >
                     <div className="w-full h-full rounded-xl flex" title={p.name}>

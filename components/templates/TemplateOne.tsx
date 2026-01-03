@@ -71,9 +71,9 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
       case 'about':
         return (
           <section key={id} style={sStyle} className="reveal grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 mb-20 lg:mb-40 p-6 lg:p-10 rounded-[32px] lg:rounded-[40px]">
-            <div className="lg:col-span-12">
+            <div className="lg:col-span-12 text-left">
               <h2 className="text-[10px] font-black uppercase tracking-[0.4em] mb-6 lg:mb-8" style={{ color: primaryColor }}>{getSectionTitle('about', 'About Me')}</h2>
-              <p className={`text-base lg:text-4xl leading-tight font-black tracking-tighter break-words`} style={{ color: sHeadingColor }}>{data.bio}</p>
+              <p className={`text-base lg:text-2xl leading-[1.4] font-black tracking-tight break-words max-w-4xl`} style={{ color: sHeadingColor }}>{data.bio}</p>
             </div>
           </section>
         );
@@ -270,7 +270,7 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const contactHeadingColor = getHeadingColor('contact');
 
   return (
-    <div ref={containerRef} className={`min-h-full transition-colors duration-1000 relative overflow-x-hidden ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-900'} font-sans`}>
+    <div ref={containerRef} className={`min-h-full transition-colors duration-1000 relative overflow-x-hidden font-sans`} style={{ backgroundColor: data.settings.backgroundColor, color: globalBodyTextColor }}>
       {selectedImage && (
         <div
           className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-20"

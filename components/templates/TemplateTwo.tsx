@@ -6,6 +6,7 @@ import { Github, Linkedin, Instagram, GraduationCap, Briefcase, Camera, Sparkles
 const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const primaryColor = data.settings.primaryColor;
   const bgColor = data.settings.backgroundColor;
+  const isDark = data.settings.theme === 'dark';
   const globalBodyTextColor = data.settings.textColor;
   const globalHeadingColor = data.settings.headingColor;
   const skillsList = data.skills.split(',').map(s => s.trim()).filter(Boolean);
@@ -46,10 +47,10 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
         };
       case UIStyle.EDITORIAL:
         return {
-          container: "max-w-5xl mx-auto p-4 sm:p-8 lg:p-24 space-y-16 lg:space-y-32 bg-white",
-          card: "bg-white p-6 sm:p-12 lg:p-20 border-l-4 lg:border-l-8 border-black shadow-none rounded-none transition-all hover:bg-zinc-50",
-          header: "mb-16 lg:mb-32 flex flex-col items-start text-left border-b-4 lg:border-b-8 border-black pb-12 lg:pb-24 gap-8 lg:gap-12",
-          badge: "text-black font-serif italic text-xl lg:text-2xl mb-6 lg:mb-8 block border-b border-black/10 pb-4 w-full",
+          container: `max-w-5xl mx-auto p-4 sm:p-8 lg:p-24 space-y-16 lg:space-y-32 ${isDark ? 'bg-zinc-950' : 'bg-white'}`,
+          card: `p-6 sm:p-12 lg:p-20 border-l-4 lg:border-l-8 border-current shadow-none rounded-none transition-all ${isDark ? 'bg-zinc-900/50 hover:bg-zinc-900' : 'bg-white hover:bg-zinc-50'}`,
+          header: `mb-16 lg:mb-32 flex flex-col items-start text-left border-b-4 lg:border-b-8 border-current pb-12 lg:pb-24 gap-8 lg:gap-12`,
+          badge: `font-serif italic text-xl lg:text-2xl mb-6 lg:mb-8 block border-b border-current/10 pb-4 w-full`,
           grid: "flex flex-col gap-16 lg:gap-32",
           itemSpan: (id: string) => "w-full"
         };
@@ -57,7 +58,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
         return {
           container: "max-w-4xl mx-auto space-y-16 lg:space-y-32 py-12 lg:py-24 px-4 sm:px-8",
           card: "bg-transparent p-0 border-0 shadow-none",
-          header: "mb-16 lg:mb-32 flex flex-col items-start text-left border-b border-black/5 pb-10 lg:pb-20",
+          header: `mb-16 lg:mb-32 flex flex-col items-start text-left border-b border-current/10 pb-10 lg:pb-20`,
           badge: "text-indigo-600 font-black uppercase text-[10px] tracking-widest block mb-6 lg:mb-8",
           grid: "flex flex-col gap-12 lg:gap-24",
           itemSpan: (id: string) => "w-full"
@@ -65,9 +66,9 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
       case UIStyle.NEOBRUTAL:
         return {
           container: "max-w-6xl mx-auto p-4 sm:p-8 lg:p-12 space-y-8 lg:space-y-12",
-          card: "bg-white border-[3px] lg:border-[4px] border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] lg:shadow-[10px_10px_0_0_rgba(0,0,0,1)] p-6 sm:p-8 lg:p-12 rounded-none",
-          header: "bg-white border-[3px] lg:border-[4px] border-black shadow-[10px_10px_0_0_rgba(0,0,0,1)] lg:shadow-[15px_15px_0_0_rgba(0,0,0,1)] p-8 lg:p-16 rounded-none flex flex-col lg:flex-row items-center gap-8 lg:gap-12 mb-8 lg:mb-12",
-          badge: "bg-yellow-400 text-black border-2 border-black px-4 py-1.5 font-black uppercase text-[10px] lg:text-[12px] mb-4 lg:mb-6 inline-block",
+          card: `${isDark ? 'bg-zinc-900' : 'bg-white'} border-[3px] lg:border-[4px] border-current shadow-[6px_6px_0_0_rgba(0,0,0,1)] lg:shadow-[10px_10px_0_0_rgba(0,0,0,1)] p-6 sm:p-8 lg:p-12 rounded-none`,
+          header: `${isDark ? 'bg-zinc-900' : 'bg-white'} border-[3px] lg:border-[4px] border-current shadow-[10px_10px_0_0_rgba(0,0,0,1)] lg:shadow-[15px_15px_0_0_rgba(0,0,0,1)] p-8 lg:p-16 rounded-none flex flex-col lg:flex-row items-center gap-8 lg:gap-12 mb-8 lg:mb-12`,
+          badge: "bg-yellow-400 text-black border-2 border-current px-4 py-1.5 font-black uppercase text-[10px] lg:text-[12px] mb-4 lg:mb-6 inline-block",
           grid: "grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12",
           itemSpan: (id: string) => (id === 'vsl' || id === 'about' || id === 'experience' || id === 'projects') ? 'lg:col-span-2' : ''
         };
@@ -86,9 +87,9 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
       default: // GLASS
         return {
           container: "max-w-5xl mx-auto p-4 sm:p-8 lg:p-12 space-y-8 lg:space-y-12",
-          card: "backdrop-blur-2xl bg-white/30 border border-white/50 shadow-2xl rounded-[32px] lg:rounded-[64px] p-6 sm:p-10 lg:p-16 overflow-hidden",
-          header: "backdrop-blur-3xl bg-white/40 border border-white/60 shadow-2xl rounded-[40px] lg:rounded-[80px] p-8 lg:p-20 flex flex-col lg:flex-row items-center gap-8 lg:gap-16 mb-8 lg:mb-12",
-          badge: "bg-white/40 border border-white/40 px-6 py-2.5 rounded-full font-black text-[10px] lg:text-[11px] uppercase tracking-[0.3em] mb-6 lg:mb-8 inline-block",
+          card: `${isDark ? 'backdrop-blur-2xl bg-black/40 border border-white/10' : 'backdrop-blur-2xl bg-white/30 border border-white/50'} shadow-2xl rounded-[32px] lg:rounded-[64px] p-6 sm:p-10 lg:p-16 overflow-hidden`,
+          header: `${isDark ? 'backdrop-blur-3xl bg-black/50 border border-white/10' : 'backdrop-blur-3xl bg-white/40 border border-white/60'} shadow-2xl rounded-[40px] lg:rounded-[80px] p-8 lg:p-20 flex flex-col lg:flex-row items-center gap-8 lg:gap-16 mb-8 lg:mb-12`,
+          badge: `${isDark ? 'bg-white/10' : 'bg-white/40'} border border-white/40 px-6 py-2.5 rounded-full font-black text-[10px] lg:text-[11px] uppercase tracking-[0.3em] mb-6 lg:mb-8 inline-block`,
           grid: "grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12",
           itemSpan: (id: string) => (id === 'vsl' || id === 'about') ? 'lg:col-span-2' : ''
         };
@@ -151,7 +152,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
         return (
           <div key={id} id="about" style={sStyle} className={`reveal ${span} transition-all ${vibe.card}`}>
             <Title label={getSectionTitle('about', 'About Me')} icon={User} color={sHeadingColor} />
-            <p className={`break-words ${uiStyle === UIStyle.MINIMAL ? 'text-lg sm:text-4xl lg:text-7xl leading-tight' : uiStyle === UIStyle.EDITORIAL ? 'serif text-xl sm:text-4xl lg:text-6xl leading-tight italic font-light' : 'text-base sm:text-2xl lg:text-4xl font-black'} tracking-tighter`} style={{ color: sHeadingColor, fontFamily: data.settings.headingFont }}>{data.bio}</p>
+            <p className={`break-words max-w-4xl ${uiStyle === UIStyle.MINIMAL ? 'text-lg sm:text-2xl lg:text-3xl leading-[1.3]' : uiStyle === UIStyle.EDITORIAL ? 'serif text-xl sm:text-2xl lg:text-3xl leading-[1.4] italic font-light' : 'text-base sm:text-xl lg:text-2xl font-black'} tracking-tight`} style={{ color: sHeadingColor, fontFamily: data.settings.headingFont }}>{data.bio}</p>
           </div>
         );
       case 'resume':
