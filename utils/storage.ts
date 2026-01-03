@@ -10,7 +10,29 @@ export interface SavedSite {
 
 export const storage = {
   // Save or Update a portfolio in the cloud
-  saveSite: async (slug: string, data: PortfolioData, email: string) => {
+  saveSite: async (slug: string, data: PortfolioData, email: string, oldSlug?: string | null) => {
+    // If we are renaming an existing site (slug changed)
+    if (oldSlug && oldSlug !== slug) {
+      const { error } = await supabase
+        .from('portfolios')
+        .update({
+          slug,
+          data,
+          updated_at: new Date().toISOString()
+        })
+        .eq('slug', oldSlug)
+        .eq('owner_email', email);
+
+      if (error) {
+        if (error.message.includes('unique constraint') || error.code === '23505') {
+          throw new Error("This URL is already taken! Please try another one.");
+        }
+        throw error;
+      }
+      return;
+    }
+
+    // Otherwise, normal upsert (for new sites or updating content of same slug)
     const { error } = await supabase
       .from('portfolios')
       .upsert({
@@ -21,7 +43,15 @@ export const storage = {
       }, { onConflict: 'slug' });
 
     if (error) {
-      if (error.message.includes('unique constraint')) throw new Error("This URL is already taken!");
+      if (error.message.includes('unique constraint') || error.code === '23505') {
+        // If it's an upsert and we get a unique constraint error, 
+        // it means either the slug is taken by someone else OR 
+        // if there's a 1-site limit, the user already has a site.
+        if (error.message.includes('owner_email')) {
+          throw new Error("You already have a published portfolio. Try editing it instead of creating a new one!");
+        }
+        throw new Error("This URL is already taken!");
+      }
       throw error;
     }
   },
@@ -33,7 +63,7 @@ export const storage = {
       .select('data')
       .eq('slug', slug)
       .single();
-    
+
     if (error) return null;
     return data.data as PortfolioData;
   },

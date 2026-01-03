@@ -12,9 +12,10 @@ interface Props {
   userEmail: string;
   onOpenAuth: () => void;
   initialSlug: string | null;
+  onSlugChange?: (slug: string) => void;
 }
 
-const PublishModal: React.FC<{ isOpen: boolean, onClose: () => void, data: PortfolioData, email: string, initialSlug: string | null }> = ({ isOpen, onClose, data, email, initialSlug }) => {
+const PublishModal: React.FC<{ isOpen: boolean, onClose: () => void, data: PortfolioData, email: string, initialSlug: string | null, onSlugChange?: (slug: string) => void }> = ({ isOpen, onClose, data, email, initialSlug, onSlugChange }) => {
   const [slug, setSlug] = useState(initialSlug || data.name.replace(/\s+/g, '').toLowerCase() || 'mysite');
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -31,9 +32,10 @@ const PublishModal: React.FC<{ isOpen: boolean, onClose: () => void, data: Portf
 
     try {
       // We 'await' the actual database call now
-      await storage.saveSite(slug, data, email);
+      await storage.saveSite(slug, data, email, initialSlug);
       setIsPublishing(false);
       setIsSuccess(true);
+      onSlugChange?.(slug);
     } catch (e: any) {
       setError(e.message || "Failed to publish");
       setIsPublishing(false);
@@ -99,7 +101,7 @@ const PublishModal: React.FC<{ isOpen: boolean, onClose: () => void, data: Portf
   );
 };
 
-const PortfolioPreview: React.FC<Props> = ({ data, onBack, isLoggedIn, userEmail, onOpenAuth, initialSlug }) => {
+const PortfolioPreview: React.FC<Props> = ({ data, onBack, isLoggedIn, userEmail, onOpenAuth, initialSlug, onSlugChange }) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -128,7 +130,7 @@ const PortfolioPreview: React.FC<Props> = ({ data, onBack, isLoggedIn, userEmail
 
     setTimeout(() => {
       try {
-        storage.saveSite(slug, data, userEmail);
+        storage.saveSite(slug, data, userEmail, initialSlug);
         setIsSaving(false);
         setShowSaveSuccess(true);
         setTimeout(() => setShowSaveSuccess(false), 3000);
@@ -141,7 +143,14 @@ const PortfolioPreview: React.FC<Props> = ({ data, onBack, isLoggedIn, userEmail
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <PublishModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={data} email={userEmail} initialSlug={initialSlug} />
+      <PublishModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={data}
+        email={userEmail}
+        initialSlug={initialSlug}
+        onSlugChange={onSlugChange}
+      />
 
       <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4 sticky top-24 z-30">
         <div className="flex items-center gap-4">
