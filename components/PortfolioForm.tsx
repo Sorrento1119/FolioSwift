@@ -196,8 +196,19 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700">Profile Photo</label>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner">
-              {data.photo ? <img src={data.photo} className="w-full h-full object-cover" /> : <Camera className="text-slate-400 w-5 h-5" />}
+            <div className="relative group/profile">
+              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner">
+                {data.photo ? <img src={data.photo} className="w-full h-full object-cover" /> : <Camera className="text-slate-400 w-5 h-5" />}
+              </div>
+              {data.photo && (
+                <button
+                  type="button"
+                  onClick={() => setData(prev => ({ ...prev, photo: '' }))}
+                  className="absolute -top-1 -right-1 bg-white border border-slate-200 text-red-500 p-1 rounded-full shadow-sm opacity-0 group-hover/profile:opacity-100 transition-opacity hover:bg-red-50"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
             </div>
             <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'photo')} className="text-xs text-slate-500 cursor-pointer" />
           </div>
@@ -306,7 +317,20 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700">Education Image (Optional)</label>
           <div className="flex items-center gap-4">
-            {data.educationImage && <img src={data.educationImage} className="w-10 h-10 rounded border" />}
+            <div className="relative group/eduimg">
+              <div className="w-12 h-12 rounded border bg-slate-50 flex items-center justify-center overflow-hidden">
+                {data.educationImage ? <img src={data.educationImage} className="w-full h-full object-cover" /> : <GraduationCap className="text-slate-300 w-6 h-6" />}
+              </div>
+              {data.educationImage && (
+                <button
+                  type="button"
+                  onClick={() => setData(prev => ({ ...prev, educationImage: '' }))}
+                  className="absolute -top-2 -right-2 bg-white border border-slate-200 text-red-500 p-1 rounded-full shadow-sm opacity-0 group-hover/eduimg:opacity-100 transition-opacity hover:bg-red-50"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
             <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'educationImage')} className="text-xs text-slate-500" />
           </div>
         </div>
@@ -475,7 +499,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
                   <button type="button" onClick={() => addProjectLink(index)} className="flex items-center gap-2 text-indigo-600 font-bold text-sm px-2 py-1 hover:bg-indigo-50 rounded-lg"><Plus className="w-4 h-4" /> Add Link</button>
                 </div>
               </div>
-              <div className="w-full md:w-32 h-32 flex-shrink-0 bg-white border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden relative">
+              <div className="w-full md:w-32 h-32 flex-shrink-0 bg-white border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden relative group/projimg">
                 {project.image ? (
                   <img src={project.image} className="w-full h-full object-cover" />
                 ) : (
@@ -484,6 +508,15 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
                     <span className="text-[10px] font-black text-slate-400">UPLOAD</span>
                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'projectImage', index)} className="hidden" />
                   </label>
+                )}
+                {project.image && (
+                  <button
+                    type="button"
+                    onClick={() => handleProjectChange(index, 'image', '')}
+                    className="absolute inset-0 bg-black/40 opacity-0 group-hover/projimg:opacity-100 flex items-center justify-center transition-opacity"
+                  >
+                    <Trash2 className="text-white w-5 h-5" />
+                  </button>
                 )}
               </div>
             </div>
