@@ -8,7 +8,7 @@ import VSLEditor from './components/VSLEditor';
 import PortfolioPreview from './components/PortfolioPreview';
 import TemplateTwo from './components/templates/TemplateTwo';
 import { SavedSite, storage } from './utils/storage';
-import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck, Github } from 'lucide-react';
+import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, EyeOff, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck, Github } from 'lucide-react';
 
 const INITIAL_DATA: PortfolioData = {
   name: '',
@@ -129,11 +129,13 @@ const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', on
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     setMode(initialMode);
     setError('');
+    setShowPassword(false);
   }, [initialMode, isOpen]);
 
   if (!isOpen) return null;
@@ -196,11 +198,24 @@ const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', on
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Secure Password</label>
-              <input
-                type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
             <button type="submit" className="w-full bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-indigo-700 transition-all mt-4">
               {mode === 'login' ? 'Continue to Dashboard' : 'Create My Account'}

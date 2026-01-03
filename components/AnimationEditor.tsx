@@ -215,9 +215,9 @@ const AnimationEditor: React.FC<Props> = ({ settings, navbarEnabled, onNavbarCha
         </div>
       </div>
 
-      {/* Interface Vibe */}
+      {/* Themes */}
       <div className="bg-white p-10 rounded-[40px] border border-slate-200 shadow-sm">
-        <h3 className="text-xl font-black mb-8 flex items-center gap-3"><Layers className="text-indigo-600 w-5 h-5" /> Interface Vibe</h3>
+        <h3 className="text-xl font-black mb-8 flex items-center gap-3"><Layers className="text-indigo-600 w-5 h-5" /> Themes</h3>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
           {Object.values(UIStyle).map((style) => (
             <button
