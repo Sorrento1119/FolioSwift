@@ -90,5 +90,17 @@ export const storage = {
     if (error) {
       throw error;
     }
+  },
+
+  // Delete all data for a specific user
+  deleteAccount: async (email: string) => {
+    const { error } = await supabase
+      .from('portfolios')
+      .delete()
+      .eq('owner_email', email);
+
+    if (error) {
+      throw error;
+    }
   }
 };

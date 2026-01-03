@@ -8,7 +8,7 @@ import VSLEditor from './components/VSLEditor';
 import PortfolioPreview from './components/PortfolioPreview';
 import TemplateTwo from './components/templates/TemplateTwo';
 import { SavedSite, storage } from './utils/storage';
-import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, EyeOff, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck, Github } from 'lucide-react';
+import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, EyeOff, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck, Github, Trash2, AlertTriangle } from 'lucide-react';
 
 const INITIAL_DATA: PortfolioData = {
   name: '',
@@ -316,6 +316,33 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      "Wait! Are you absolutely sure?\n\nDeleting your account will permanently remove ALL your portfolios and data. This action cannot be undone."
+    );
+
+    if (confirmDelete) {
+      const secondConfirm = window.confirm(
+        "Final Warning: You will lose access to all your published websites. Proceed with complete account deletion?"
+      );
+
+      if (secondConfirm) {
+        try {
+          await storage.deleteAccount(user!.email);
+          // Also sign out from Supabase if possible, or just clear local state
+          await supabase.auth.signOut();
+          localStorage.removeItem('folioswift_session');
+          setUser(null);
+          setView('landing');
+          alert("Your account and all associated data have been permanently deleted.");
+        } catch (error) {
+          console.error("Error deleting account:", error);
+          alert("Failed to delete account data. Please contact support.");
+        }
+      }
+    }
+  };
+
   const currentHost = window.location.host;
 
   if (view === 'loading') return <LoadingScreen />;
@@ -468,6 +495,25 @@ const App: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-24 pt-12 border-t border-slate-200">
+            <div className="bg-red-50/50 rounded-[32px] p-8 border border-red-100 items-center flex flex-col md:flex-row justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                  <h3 className="text-xl font-black text-slate-900">Danger Zone</h3>
+                </div>
+                <p className="text-slate-500 font-medium text-sm">Once you delete your account, there is no going back. Please be certain.</p>
+              </div>
+              <button
+                onClick={handleDeleteAccount}
+                className="bg-white text-red-600 border-2 border-red-100 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-sm flex items-center gap-2 group"
+              >
+                <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                Delete Entire Account
+              </button>
+            </div>
           </div>
         </main>
       </div>
