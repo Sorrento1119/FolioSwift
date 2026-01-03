@@ -121,7 +121,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
       <div className={`p-4 ${uiStyle === UIStyle.NEON ? 'bg-black/50 border border-white/20' : ''}`}>
         <Icon className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: primaryColor }} />
       </div>
-      <span className={`text-[10px] lg:text-[11px] font-black uppercase tracking-[0.5em] opacity-40 ${uiStyle === UIStyle.EDITORIAL ? 'serif italic text-base lg:text-lg' : ''}`} style={{ color: color }}>{label}</span>
+      <span className={`section-title-label text-[10px] lg:text-[11px] font-black uppercase tracking-[0.5em] opacity-40 ${uiStyle === UIStyle.EDITORIAL ? 'serif italic text-base lg:text-lg' : ''}`} style={{ color: color }}>{label}</span>
     </div>
   );
 
@@ -337,13 +337,13 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             <Title label={getSectionTitle('contact', 'Contact')} icon={Phone} color={sHeadingColor} />
             <div className="flex flex-row flex-wrap lg:flex-row justify-start lg:justify-start gap-3 lg:gap-6 mb-8 lg:mb-12">
               {[
-                { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: '#0077b5' },
-                { id: 'github', icon: Github, link: data.github, color: '#171515' },
+                { id: 'linkedin', icon: Linkedin, link: data.linkedin, color: isDark ? '#00a0dc' : '#0077b5' },
+                { id: 'github', icon: Github, link: data.github, color: isDark ? '#ffffff' : '#171515' },
                 { id: 'instagram', icon: Instagram, link: data.instagram, color: '#e4405f' },
-                { id: 'x', icon: Twitter, link: data.x, color: '#000' },
+                { id: 'x', icon: Twitter, link: data.x, color: isDark ? '#ffffff' : '#000' },
                 { id: 'whatsapp', icon: MessageCircle, link: data.whatsapp ? `https://wa.me/${data.whatsapp.replace(/\D/g, '')}` : '', color: '#25D366' }
               ].filter(s => s.link).map(s => (
-                <a key={s.id} href={s.link} target="_blank" className={`w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center border bg-white shadow-xl transition-all hover:scale-110 active:scale-95 ${uiStyle === UIStyle.GLASS ? 'rounded-xl lg:rounded-[24px]' : uiStyle === UIStyle.SWISS ? 'border-[2px] lg:border-[3px] border-black' : 'rounded-none border-[2px] lg:border-[3px] border-black'}`}>
+                <a key={s.id} href={s.link} target="_blank" className={`w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center border shadow-xl transition-all hover:scale-110 active:scale-95 ${isDark ? 'bg-zinc-900 border-white/10 shadow-black/40' : 'bg-white border-slate-200'} ${uiStyle === UIStyle.GLASS ? 'rounded-xl lg:rounded-[24px]' : uiStyle === UIStyle.SWISS ? 'border-[2px] lg:border-[3px] border-black' : 'rounded-none border-[2px] lg:border-[3px] border-black'}`}>
                   <s.icon className="w-5 h-5 lg:w-7 lg:h-7" style={{ color: s.color }} />
                 </a>
               ))}
@@ -485,6 +485,9 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
           .force-mobile .lg\\:text-3xl, .force-mobile .text-3xl { font-size: 1.1rem !important; }
           
           .force-mobile .lg\\:p-24, .force-mobile .lg\\:p-20, .force-mobile .lg\\:p-16, .force-mobile .lg\\:p-12 { padding: 1.25rem !important; }
+          .force-mobile .section-title-label { letter-spacing: 0.1em !important; font-size: 9px !important; }
+          .force-mobile .flex { flex-wrap: wrap !important; }
+          .force-mobile { overflow-x: hidden !important; }
           
           .force-mobile h1, .force-mobile p { 
             overflow-wrap: break-word !important; 
@@ -532,6 +535,8 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             word-break: normal !important; 
             hyphens: none !important;
           }
+          .force-tablet .section-title-label { letter-spacing: 0.2em !important; }
+          .force-tablet { overflow-x: hidden !important; }
           
           /* Better Nav Hover Styles */
           .mobile-nav-bottom button .nav-label {
@@ -554,7 +559,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
       {data.navbarEnabled && (
         <>
           {/* DESKTOP NAVBAR */}
-          <nav className="desktop-nav sticky top-8 mx-auto z-[100] w-max px-8 py-4 bg-white/90 backdrop-blur-3xl border border-slate-200 rounded-full shadow-2xl flex items-center justify-center gap-6 mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+          <nav className={`desktop-nav sticky top-8 mx-auto z-[100] w-max px-8 py-4 backdrop-blur-3xl border rounded-full shadow-2xl flex items-center justify-center gap-6 mb-12 animate-in fade-in slide-in-from-top-4 duration-700 ${isDark ? 'bg-black/80 border-white/10' : 'bg-white/90 border-slate-200'}`}>
             {data.sectionOrder.filter(sec => {
               if (sec === 'vsl') return data.vslUrl;
               if (sec === 'about') return data.bio;
@@ -569,7 +574,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
               if (sec === 'contact') return data.phone || data.email || data.address || data.whatsapp || data.linkedin || data.github || data.instagram || data.x || data.customLinks.length > 0;
               return false;
             }).slice(0, 9).map((sec) => (
-              <button key={sec} onClick={() => scrollTo(sec)} className="p-2.5 rounded-full hover:bg-black/5 text-slate-500 hover:text-indigo-600 transition-all group relative">
+              <button key={sec} onClick={() => scrollTo(sec)} className={`p-2.5 rounded-full hover:bg-black/5 transition-all group relative ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-indigo-600'}`}>
                 {sec === 'vsl' && <Youtube className="w-5 h-5" />}
                 {sec === 'about' && <User className="w-5 h-5" />}
                 {sec === 'resume' && <FileText className="w-5 h-5" />}
@@ -588,14 +593,14 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
           </nav>
 
           {/* MOBILE TOP HEADER */}
-          <div className="mobile-nav-top w-full px-6 py-4 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm animate-in slide-in-from-top duration-500">
+          <div className={`mobile-nav-top w-full px-6 py-4 flex items-center justify-between backdrop-blur-xl border-b shadow-sm animate-in slide-in-from-top duration-500 ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/80 border-slate-100'}`}>
             <div className="flex items-center gap-3">
               {data.photo && <img src={data.photo} className="w-10 h-10 rounded-full object-cover border-2 border-indigo-100" />}
               <span className="font-bold text-sm tracking-tighter truncate max-w-[150px]">{data.name}</span>
             </div>
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 active:scale-90 transition-transform"
+              className={`w-12 h-12 flex items-center justify-center rounded-2xl border active:scale-90 transition-transform ${isDark ? 'bg-white/10 border-white/10 text-white' : 'bg-slate-50 border-slate-100 text-slate-900'}`}
             >
               <div className="flex flex-col gap-1.5 items-end">
                 <div className="w-6 h-0.5 bg-current rounded-full" />
@@ -608,12 +613,12 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
 
           {/* MOBILE FULL SCREEN MENU */}
           {isMobileMenuOpen && (
-            <div className="mobile-menu-overlay fixed inset-0 z-[200] bg-white/95 backdrop-blur-2xl p-8 flex flex-col animate-in fade-in zoom-in-95 duration-300">
+            <div className={`mobile-menu-overlay fixed inset-0 z-[200] backdrop-blur-2xl p-8 flex flex-col animate-in fade-in zoom-in-95 duration-300 ${isDark ? 'bg-black/95' : 'bg-white/95'}`}>
               <div className="flex justify-between items-center mb-16">
                 <span className="text-2xl font-black tracking-tighter uppercase" style={{ color: primaryColor }}>{data.name || 'Navigation'}</span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-900"
+                  className={`w-12 h-12 flex items-center justify-center rounded-2xl border ${isDark ? 'bg-white/10 border-white/10 text-white' : 'bg-slate-50 border-slate-100 text-slate-900'}`}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -629,7 +634,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
                         scrollTo(id);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="text-left py-4 border-b border-slate-100 group flex items-center justify-between"
+                      className={`text-left py-4 border-b group flex items-center justify-between ${isDark ? 'border-white/5' : 'border-slate-100'}`}
                     >
                       <span className="text-4xl font-black tracking-tighter opacity-90 group-hover:translate-x-4 transition-transform group-hover:text-indigo-600 uppercase">{label}</span>
                       <ArrowRight className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -682,16 +687,16 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
           )
         )}
 
-        <footer className={`reveal py-16 lg:py-40 text-center opacity-20 ${uiStyle === UIStyle.SWISS ? 'lg:col-span-12 border-r border-b border-black/10' : ''}`} style={{ color: globalBodyTextColor }}>
-          <p className="text-[8px] lg:text-[11px] font-black uppercase tracking-[0.6em]">Powered by FolioSwift • 2025</p>
+        <footer className={`reveal py-16 lg:py-40 text-center opacity-40 flex flex-col items-center justify-center ${uiStyle === UIStyle.SWISS ? 'lg:col-span-12 border-r border-b border-black/10' : ''}`} style={{ color: globalBodyTextColor }}>
+          <a href={window.location.origin} className="text-[8px] lg:text-[11px] font-black uppercase tracking-[0.6em] hover:opacity-100 transition-opacity">Powered by FolioSwift • 2025</a>
         </footer>
         {data.navbarEnabled && (
-          <div className="mobile-nav-bottom p-2 bg-white/90 backdrop-blur-3xl border border-slate-200 rounded-[28px] shadow-[0_20px_40px_rgba(0,0,0,0.15)] flex items-center gap-2 animate-in slide-in-from-bottom-8 duration-700">
+          <div className={`mobile-nav-bottom p-2 backdrop-blur-3xl border rounded-[28px] shadow-[0_20px_40px_rgba(0,0,0,0.15)] flex items-center gap-2 animate-in slide-in-from-bottom-8 duration-700 ${isDark ? 'bg-black/80 border-white/10' : 'bg-white/90 border-slate-200'}`}>
             {/* 1. Video (if available, else About) */}
             {data.vslUrl ? (
               <button
                 onClick={() => scrollTo('vsl')}
-                className={`group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl transition-all active:scale-95 ${uiStyle === UIStyle.GLASS ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50'}`}
+                className={`group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl transition-all active:scale-95 ${uiStyle === UIStyle.GLASS ? (isDark ? 'bg-white/10 text-white' : 'bg-indigo-50 text-indigo-600') : (isDark ? 'bg-white/5 text-slate-300' : 'bg-slate-50')}`}
               >
                 <Youtube className="w-5 h-5" />
                 <span className="nav-label font-black uppercase tracking-tight truncate max-w-[80px] text-center">{getSectionTitle('vsl', 'Video Introduction')}</span>
@@ -699,7 +704,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
             ) : (
               <button
                 onClick={() => scrollTo('about')}
-                className="group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 transition-all active:scale-95"
+                className={`group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl transition-all active:scale-95 ${isDark ? 'bg-white/5 text-slate-300' : 'bg-slate-50'}`}
               >
                 <User className="w-5 h-5" />
                 <span className="nav-label font-black uppercase tracking-tight truncate max-w-[80px] text-center">{getSectionTitle('about', 'About Me')}</span>
@@ -718,7 +723,7 @@ const TemplateTwo: React.FC<{ data: PortfolioData }> = ({ data }) => {
               return (
                 <button
                   onClick={() => scrollTo(config.id as SectionId)}
-                  className="group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 transition-all active:scale-95"
+                  className={`group flex-1 flex flex-col items-center justify-center p-3 rounded-2xl transition-all active:scale-95 ${isDark ? 'bg-white/5 text-slate-300' : 'bg-slate-50'}`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="nav-label font-black uppercase tracking-tight truncate max-w-[80px] text-center">{config.label}</span>

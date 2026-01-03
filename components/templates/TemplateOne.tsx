@@ -385,7 +385,7 @@ const TemplateOne: React.FC<{ data: PortfolioData }> = ({ data }) => {
           )}
           <div className="text-center lg:text-right opacity-60">
             <p className="text-xl lg:text-2xl font-black mb-2 tracking-tighter" style={{ color: contactHeadingColor }}>{data.name}</p>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em]" style={{ color: primaryColor }}>© {new Date().getFullYear()} FOLIOSWIFT</p>
+            <a href={window.location.origin} className="text-[10px] font-black uppercase tracking-[0.4em] hover:opacity-100 transition-opacity" style={{ color: primaryColor }}>Powered by FOLIOSWIFT • 2025</a>
           </div>
         </footer>
       </div>

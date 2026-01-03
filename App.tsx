@@ -8,7 +8,7 @@ import VSLEditor from './components/VSLEditor';
 import PortfolioPreview from './components/PortfolioPreview';
 import TemplateTwo from './components/templates/TemplateTwo';
 import { SavedSite, storage } from './utils/storage';
-import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck } from 'lucide-react';
+import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck, Github } from 'lucide-react';
 
 const INITIAL_DATA: PortfolioData = {
   name: '',
@@ -113,14 +113,6 @@ const LoadingScreen: React.FC = () => {
             <div className="w-2 h-16 bg-indigo-500 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-1.0s]"></div>
             <div className="w-2 h-12 bg-indigo-400 rounded-full animate-[wavy_1.2s_ease-in-out_infinite] [animation-delay:-0.9s]"></div>
           </div>
-        </div>
-      </div>
-      <div className="mt-12 text-center">
-        <h2 className="text-xl font-black text-slate-900 tracking-tighter uppercase mb-1">Building Your Story</h2>
-        <div className="flex items-center justify-center gap-1">
-          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce"></div>
         </div>
       </div>
       <style>{`
@@ -317,6 +309,10 @@ const App: React.FC = () => {
           <span className="text-xl font-black tracking-tighter text-slate-900">FolioSwift</span>
         </div>
         <div className="flex items-center gap-6">
+          <a href="https://github.com/Sorrento1119/FolioSwift" target="_blank" className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-900 transition-all font-bold text-xs">
+            <Github className="w-4 h-4" />
+            <span>GitHub</span>
+          </a>
           <button onClick={() => openAuth('login')} className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Login</button>
           <button onClick={() => openAuth('signup')} className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">Get Started</button>
         </div>
@@ -343,23 +339,38 @@ const App: React.FC = () => {
           </p>
 
           {/* Main CTA */}
-          <div className="pt-8">
+          <div className="pt-8 flex flex-col items-center gap-4">
             <button
               onClick={() => user ? setView('builder') : openAuth('signup')}
               className="bg-[#6366f1] text-white px-10 py-5 rounded-2xl font-black text-lg shadow-[0_20px_50px_-12px_rgba(99,102,241,0.5)] hover:scale-105 hover:bg-[#5558e6] transition-all flex items-center gap-3 mx-auto"
             >
               Start Building Now <ArrowRight className="w-5 h-5" />
             </button>
+            <a
+              href="https://github.com/Sorrento1119/FolioSwift"
+              target="_blank"
+              className="flex items-center gap-2 px-8 py-3 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all font-black text-xs uppercase tracking-widest"
+            >
+              <Github className="w-4 h-4" />
+              View Open Source
+            </a>
           </div>
         </div>
       </main>
 
-      {/* Footer Features */}
-      <footer className="py-16 flex justify-center items-center gap-12 md:gap-32">
-        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">No Coding</span>
-        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Mobile Ready</span>
-        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Fully Personalized</span>
-      </footer>
+      {/* Feature Labels Out of Footer */}
+      <div className="py-20 flex flex-col items-center gap-12">
+        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-32">
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">No Coding</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Mobile Ready</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">Fully Personalized</span>
+        </div>
+
+        <div className="flex flex-col items-center text-center">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">FolioSwift • 2025</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Created by Tharv Sable</p>
+        </div>
+      </div>
     </div>
   );
 
