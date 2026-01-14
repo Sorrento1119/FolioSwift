@@ -361,10 +361,6 @@ const App: React.FC = () => {
           <span className="text-lg md:text-xl font-black tracking-tighter text-slate-900 whitespace-nowrap">FolioSwift</span>
         </div>
         <div className="flex items-center gap-3 md:gap-6">
-          <a href="https://github.com/Sorrento1119/FolioSwift" target="_blank" className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-900 transition-all font-bold text-xs">
-            <Github className="w-4 h-4" />
-            <span className="hidden sm:inline">GitHub</span>
-          </a>
           <button onClick={() => openAuth('login')} className="text-xs md:text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors whitespace-nowrap">Login</button>
           <button onClick={() => openAuth('signup')} className="hidden md:block bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all whitespace-nowrap">Get Started</button>
         </div>
@@ -398,14 +394,6 @@ const App: React.FC = () => {
             >
               Start Building Now <ArrowRight className="w-5 h-5" />
             </button>
-            <a
-              href="https://github.com/Sorrento1119/FolioSwift"
-              target="_blank"
-              className="flex items-center gap-2 px-8 py-3 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all font-black text-xs uppercase tracking-widest"
-            >
-              <Github className="w-4 h-4" />
-              View Open Source
-            </a>
           </div>
         </div>
       </main>
