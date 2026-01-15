@@ -216,7 +216,7 @@ const InitialDetailsModal: React.FC<{ isOpen: boolean, onClose: () => void, onSu
   );
 };
 
-const PublishSuccessModal: React.FC<{ isOpen: boolean, onClose: () => void, slug: string }> = ({ isOpen, onClose, slug }) => {
+const PublishSuccessModal: React.FC<{ isOpen: boolean, onClose: () => void, slug: string, onEditClick?: () => void }> = ({ isOpen, onClose, slug, onEditClick }) => {
   const currentHost = window.location.host;
   const currentOrigin = window.location.origin;
 
@@ -224,17 +224,29 @@ const PublishSuccessModal: React.FC<{ isOpen: boolean, onClose: () => void, slug
     navigator.clipboard.writeText(`${currentOrigin}/p/${slug}`);
   };
 
+  const handleEditClick = () => {
+    localStorage.setItem('folioswift_onboarding_shown', 'true');
+    if (onEditClick) {
+      onEditClick();
+    } else {
+      onClose();
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-white w-full max-w-lg rounded-[40px] shadow-2xl p-10 relative animate-in zoom-in-95 duration-300">
+        <button onClick={onClose} className="absolute top-6 right-6 text-slate-300 hover:text-slate-900 transition-colors">
+          <LogOut className="w-5 h-5 rotate-180" />
+        </button>
         <div className="text-center py-6">
           <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="w-10 h-10" />
           </div>
           <h2 className="text-4xl font-black mb-2 tracking-tight text-slate-900">You're Live!</h2>
-          <p className="text-slate-500 mb-8 font-medium">Share your work with the world.</p>
+          <p className="text-slate-500 mb-8 font-medium">Your portfolio is now published. Share it with the world or customize it further.</p>
 
           <div className="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 mb-8">
             <span className="flex-1 text-left font-bold text-slate-700 truncate text-sm">{currentHost}/p/{slug}</span>
@@ -243,13 +255,25 @@ const PublishSuccessModal: React.FC<{ isOpen: boolean, onClose: () => void, slug
             </button>
           </div>
 
+          <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-6 mb-8 text-left">
+            <p className="text-slate-700 text-sm font-medium mb-3">
+              Pro tip: Your portfolio is just the beginning. 
+            </p>
+            <p className="text-slate-900 font-black text-base">
+              Click <span className="bg-indigo-600 text-white px-2 py-1 rounded-lg">"Edit Portfolio"</span> to add your projects, skills, and customize your design.
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
+            <button 
+              onClick={handleEditClick}
+              className="bg-indigo-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-lg"
+            >
+              Edit Portfolio <ArrowRight className="w-4 h-4" />
+            </button>
             <a href={`/p/${slug}`} target="_blank" className="bg-slate-900 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-800 transition-all">
               View Site <ExternalLink className="w-4 h-4" />
             </a>
-            <button onClick={onClose} className="bg-slate-50 text-slate-700 font-bold py-4 rounded-xl hover:bg-slate-100 transition-all">
-              Dashboard
-            </button>
           </div>
         </div>
       </div>
@@ -589,7 +613,21 @@ const App: React.FC = () => {
   if (view === 'dashboard' && user) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <PublishSuccessModal isOpen={isPublishSuccessOpen} onClose={() => setIsPublishSuccessOpen(false)} slug={publishedSlug} />
+        <PublishSuccessModal 
+          isOpen={isPublishSuccessOpen} 
+          onClose={() => setIsPublishSuccessOpen(false)} 
+          slug={publishedSlug}
+          onEditClick={() => {
+            if (userSites.length > 0) {
+              const latestSite = userSites[0];
+              setData(ensureCompleteData(latestSite.data));
+              setCurrentSlug(latestSite.slug);
+              setIsPublishSuccessOpen(false);
+              setView('builder');
+              setStep('details');
+            }
+          }}
+        />
         <InitialDetailsModal isOpen={isInitialModalOpen} onClose={() => setIsInitialModalOpen(false)} onSubmit={handleInitialSubmit} />
         <header className="bg-white border-b h-20 flex items-center justify-between px-8">
           <div className="flex items-center gap-3">
