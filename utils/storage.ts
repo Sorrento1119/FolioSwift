@@ -94,6 +94,7 @@ export const storage = {
 
   // Delete all data for a specific user
   deleteAccount: async (email: string) => {
+    // Delete all portfolio data
     const { error } = await supabase
       .from('portfolios')
       .delete()
@@ -102,5 +103,12 @@ export const storage = {
     if (error) {
       throw error;
     }
-  }
+
+    // Delete the user from Supabase Auth (Requires 'delete_user' RPC function)
+    const { error: authError } = await supabase.rpc('delete_user');
+
+    if (authError) {
+      throw authError;
+    }
+  },
 };

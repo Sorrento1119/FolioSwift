@@ -182,7 +182,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
       <SectionTitle icon={User} title="Core Identity" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Display Name</label>
+          <label className="text-sm font-bold text-slate-700">Display Name <span className="text-red-500">*</span></label>
           <input required type="text" name="name" value={data.name} onChange={handleChange} placeholder="Jane Doe" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" />
         </div>
         <div className="space-y-2">
@@ -215,7 +215,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
         </div>
         <div className="md:col-span-2 space-y-2">
           <label className="text-sm font-bold text-slate-700">Personal Bio</label>
-          <textarea required name="bio" rows={3} value={data.bio} onChange={handleChange} placeholder="Describe yourself in 2-3 sentences..." className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none resize-none" />
+          <textarea name="bio" rows={3} value={data.bio} onChange={handleChange} placeholder="Describe yourself in 2-3 sentences..." className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none resize-none" />
         </div>
       </div>
 
@@ -300,7 +300,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
 
       <SectionTitle icon={Sparkles} title="Toolkit & Skills" />
       <div className="space-y-2">
-        <label className="text-sm font-bold text-slate-700">Technical Skills (Comma Separated)</label>
+        <label className="text-sm font-bold text-slate-700">Technical Skills (Comma Separated) <span className="text-red-500">*</span></label>
         <input required type="text" name="skills" value={data.skills} onChange={handleChange} placeholder="React, Python, Figma, UI/UX..." className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
       </div>
       <div className="space-y-2">
@@ -312,7 +312,7 @@ const PortfolioForm: React.FC<Props> = ({ initialData, onSubmit }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700">University & Degree</label>
-          <input required type="text" name="education" value={data.education} onChange={handleChange} placeholder="B.S. Computer Science, University of X (2025)" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
+          <input type="text" name="education" value={data.education} onChange={handleChange} placeholder="B.S. Computer Science, University of X (2025)" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700">Education Image (Optional)</label>

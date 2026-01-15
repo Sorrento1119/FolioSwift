@@ -8,7 +8,7 @@ import VSLEditor from './components/VSLEditor';
 import PortfolioPreview from './components/PortfolioPreview';
 import TemplateTwo from './components/templates/TemplateTwo';
 import { SavedSite, storage } from './utils/storage';
-import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, EyeOff, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck, Github, Trash2, AlertTriangle } from 'lucide-react';
+import { Layout, CheckCircle, Sparkles, Move, Zap, Eye, EyeOff, ArrowRight, LogOut, ExternalLink, Plus, AlertCircle, ShieldCheck, Github, Trash2, AlertTriangle, Check, Copy } from 'lucide-react';
 
 const INITIAL_DATA: PortfolioData = {
   name: '',
@@ -125,7 +125,139 @@ const LoadingScreen: React.FC = () => {
   );
 };
 
-const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', onClose: () => void, onAuth: (user: User) => void }> = ({ isOpen, initialMode, onClose, onAuth }) => {
+const InitialDetailsModal: React.FC<{ isOpen: boolean, onClose: () => void, onSubmit: (data: { name: string, skills: string, education: string }) => void }> = ({ isOpen, onClose, onSubmit }) => {
+  const [name, setName] = useState('');
+  const [skills, setSkills] = useState('');
+  const [education, setEducation] = useState('');
+  const [errors, setErrors] = useState<{ name?: string, skills?: string }>({});
+
+  useEffect(() => {
+    if (isOpen) {
+      setName('');
+      setSkills('');
+      setEducation('');
+      setErrors({});
+    }
+  }, [isOpen]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: { name?: string, skills?: string } = {};
+
+    if (!name.trim()) newErrors.name = 'Name is required';
+    if (!skills.trim()) newErrors.skills = 'Skills are required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    onSubmit({ name: name.trim(), skills: skills.trim(), education: education.trim() });
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-300">
+        <div className="p-10">
+          <div className="bg-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <Sparkles className="text-white w-6 h-6" />
+          </div>
+          <h2 className="text-3xl font-black text-slate-900 mb-2">Quick Setup</h2>
+          <p className="text-slate-500 mb-8 font-medium">Let's get your portfolio started with the essentials.</p>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">Your Name <span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'} focus:ring-2 outline-none transition-all`}
+              />
+              {errors.name && <p className="text-red-500 text-xs font-medium">{errors.name}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">Technical Skills <span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                value={skills}
+                onChange={(e) => setSkills(e.target.value)}
+                placeholder="React, Python, Figma, UI/UX..."
+                className={`w-full px-4 py-3 rounded-xl border ${errors.skills ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'} focus:ring-2 outline-none transition-all`}
+              />
+              {errors.skills && <p className="text-red-500 text-xs font-medium">{errors.skills}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">University & Degree</label>
+              <input
+                type="text"
+                value={education}
+                onChange={(e) => setEducation(e.target.value)}
+                placeholder="B.S. Computer Science, University of X (2025)"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+              />
+            </div>
+
+            <button type="submit" className="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-xl hover:bg-indigo-700 transition-all mt-6">
+              Create My Portfolio <ArrowRight className="w-5 h-5 inline ml-2" />
+            </button>
+          </form>
+        </div>
+        <button onClick={onClose} className="absolute top-6 right-6 text-slate-300 hover:text-slate-900 transition-colors">
+          <LogOut className="w-5 h-5 rotate-180" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const PublishSuccessModal: React.FC<{ isOpen: boolean, onClose: () => void, slug: string }> = ({ isOpen, onClose, slug }) => {
+  const currentHost = window.location.host;
+  const currentOrigin = window.location.origin;
+
+  const copyUrl = () => {
+    navigator.clipboard.writeText(`${currentOrigin}/p/${slug}`);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="bg-white w-full max-w-lg rounded-[40px] shadow-2xl p-10 relative animate-in zoom-in-95 duration-300">
+        <div className="text-center py-6">
+          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Check className="w-10 h-10" />
+          </div>
+          <h2 className="text-4xl font-black mb-2 tracking-tight text-slate-900">You're Live!</h2>
+          <p className="text-slate-500 mb-8 font-medium">Share your work with the world.</p>
+
+          <div className="flex items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 mb-8">
+            <span className="flex-1 text-left font-bold text-slate-700 truncate text-sm">{currentHost}/p/{slug}</span>
+            <button onClick={copyUrl} className="p-2 hover:bg-white rounded-lg transition-all text-indigo-600">
+              <Copy className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <a href={`/p/${slug}`} target="_blank" className="bg-slate-900 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-800 transition-all">
+              View Site <ExternalLink className="w-4 h-4" />
+            </a>
+            <button onClick={onClose} className="bg-slate-50 text-slate-700 font-bold py-4 rounded-xl hover:bg-slate-100 transition-all">
+              Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', onClose: () => void, onAuth: (user: User, mode: 'login' | 'signup') => void }> = ({ isOpen, initialMode, onClose, onAuth }) => {
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -155,14 +287,20 @@ const AuthModal: React.FC<{ isOpen: boolean, initialMode: 'login' | 'signup', on
         if (signUpError) throw signUpError;
         if (data.user) {
           localStorage.setItem('folioswift_session', email);
-          onAuth({ email });
+          onAuth({ email }, 'signup');
         }
       } else {
         const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
         if (data.user) {
+          // Check if user has any portfolio data
+          const userSites = await storage.getUserSites(email);
+          if (userSites.length === 0) {
+            await supabase.auth.signOut();
+            throw new Error('Account not found. Please sign up to create a new account.');
+          }
           localStorage.setItem('folioswift_session', email);
-          onAuth({ email });
+          onAuth({ email }, 'login');
         }
       }
     } catch (err: any) {
@@ -246,6 +384,9 @@ const App: React.FC = () => {
   const [step, setStep] = useState<Step>('details');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [isInitialModalOpen, setIsInitialModalOpen] = useState(false);
+  const [isPublishSuccessOpen, setIsPublishSuccessOpen] = useState(false);
+  const [publishedSlug, setPublishedSlug] = useState<string>('');
 
   useEffect(() => {
     const initApp = async () => { // Create an async function inside
@@ -292,10 +433,39 @@ const App: React.FC = () => {
     setIsAuthOpen(true);
   };
 
-  const handleAuth = (u: User) => {
+  const handleAuth = (u: User, mode: 'login' | 'signup') => {
     setUser(u);
     setIsAuthOpen(false);
-    setView('dashboard');
+    if (mode === 'signup') {
+      setIsInitialModalOpen(true);
+    } else {
+      setView('dashboard');
+    }
+  };
+
+  const handleInitialSubmit = async (initialData: { name: string, skills: string, education: string }) => {
+    const updatedData = {
+      ...data,
+      name: initialData.name,
+      skills: initialData.skills,
+      education: initialData.education
+    };
+    setData(updatedData);
+    setIsInitialModalOpen(false);
+
+    try {
+      // Auto-generate slug from name
+      const slug = initialData.name.replace(/\s+/g, '').toLowerCase() || 'mysite';
+      await storage.saveSite(slug, updatedData, user!.email, null);
+      setPublishedSlug(slug);
+      setIsPublishSuccessOpen(true);
+      setView('dashboard');
+    } catch (error) {
+      console.error('Auto-publish failed:', error);
+      // Fallback to builder if auto-publish fails
+      setView('builder');
+      setStep('details');
+    }
   };
 
   const handleLogout = () => {
@@ -352,6 +522,8 @@ const App: React.FC = () => {
   if (view === 'landing') return (
     <div className="min-h-screen bg-white flex flex-col font-['Plus_Jakarta_Sans']">
       <AuthModal isOpen={isAuthOpen} initialMode={authMode} onClose={() => setIsAuthOpen(false)} onAuth={handleAuth} />
+      <InitialDetailsModal isOpen={isInitialModalOpen} onClose={() => setIsInitialModalOpen(false)} onSubmit={handleInitialSubmit} />
+      <PublishSuccessModal isOpen={isPublishSuccessOpen} onClose={() => setIsPublishSuccessOpen(false)} slug={publishedSlug} />
 
       <header className="h-20 md:h-24 px-4 md:px-12 flex items-center justify-between border-b border-slate-50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
@@ -389,7 +561,7 @@ const App: React.FC = () => {
           {/* Main CTA */}
           <div className="pt-8 flex flex-col items-center gap-4">
             <button
-              onClick={() => user ? setView('builder') : openAuth('signup')}
+              onClick={() => user ? setIsInitialModalOpen(true) : openAuth('signup')}
               className="bg-[#6366f1] text-white px-10 py-5 rounded-2xl font-black text-lg shadow-[0_20px_50px_-12px_rgba(99,102,241,0.5)] hover:scale-105 hover:bg-[#5558e6] transition-all flex items-center gap-3 mx-auto"
             >
               Start Building Now <ArrowRight className="w-5 h-5" />
@@ -417,6 +589,8 @@ const App: React.FC = () => {
   if (view === 'dashboard' && user) {
     return (
       <div className="min-h-screen bg-slate-50">
+        <PublishSuccessModal isOpen={isPublishSuccessOpen} onClose={() => setIsPublishSuccessOpen(false)} slug={publishedSlug} />
+        <InitialDetailsModal isOpen={isInitialModalOpen} onClose={() => setIsInitialModalOpen(false)} onSubmit={handleInitialSubmit} />
         <header className="bg-white border-b h-20 flex items-center justify-between px-8">
           <div className="flex items-center gap-3">
             <Sparkles className="text-indigo-600 w-6 h-6" />
@@ -435,7 +609,7 @@ const App: React.FC = () => {
             <div className="flex gap-4">
               {userSites.length === 0 && (
                 <button
-                  onClick={() => { setData(INITIAL_DATA); setCurrentSlug(null); setView('builder'); setStep('details'); }}
+                  onClick={() => setIsInitialModalOpen(true)}
                   className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black flex items-center gap-2 shadow-lg hover:bg-indigo-700"
                 >
                   <Plus className="w-5 h-5" /> New Portfolio
@@ -457,7 +631,7 @@ const App: React.FC = () => {
             ) : userSites.length === 0 ? (
               <div className="col-span-2 py-20 bg-white rounded-[32px] border-2 border-dashed border-slate-200 flex flex-col items-center">
                 <p className="text-slate-400 font-bold mb-4">You haven't published any sites yet.</p>
-                <button onClick={() => { setData(INITIAL_DATA); setCurrentSlug(null); setView('builder'); setStep('details'); }} className="text-indigo-600 font-black flex items-center gap-2">Build your first one <ArrowRight className="w-4 h-4" /></button>
+                <button onClick={() => setIsInitialModalOpen(true)} className="text-indigo-600 font-black flex items-center gap-2">Build your first one <ArrowRight className="w-4 h-4" /></button>
               </div>
             ) : userSites.map(site => (
               <div key={site.slug} className="bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm hover:border-indigo-200 transition-all group">
@@ -469,7 +643,7 @@ const App: React.FC = () => {
                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest truncate">{currentHost}/p/{site.slug}</p>
                 <div className="flex gap-2 mt-8">
                   <button
-                    onClick={() => { setData(ensureCompleteData(site.data)); setCurrentSlug(site.slug); setView('builder'); setStep('preview'); }}
+                    onClick={() => { setData(ensureCompleteData(site.data)); setCurrentSlug(site.slug); setView('builder'); setStep('details'); }}
                     className="w-full bg-slate-50 text-slate-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-colors"
                   >
                     Edit Portfolio
@@ -511,6 +685,8 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-900">
       <AuthModal isOpen={isAuthOpen} initialMode={authMode} onClose={() => setIsAuthOpen(false)} onAuth={handleAuth} />
+      <InitialDetailsModal isOpen={isInitialModalOpen} onClose={() => setIsInitialModalOpen(false)} onSubmit={handleInitialSubmit} />
+      <PublishSuccessModal isOpen={isPublishSuccessOpen} onClose={() => setIsPublishSuccessOpen(false)} slug={publishedSlug} />
       <header className="bg-white border-b sticky top-0 z-50 px-4 md:px-12 h-24 flex items-center justify-between shadow-sm">
         <button onClick={() => setView(user ? 'dashboard' : 'landing')} className="flex items-center gap-3">
           <div className="bg-[#6366f1] p-2.5 rounded-xl"><Sparkles className="text-white w-5 h-5" /></div>
